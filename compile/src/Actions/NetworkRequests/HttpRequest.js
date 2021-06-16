@@ -8,68 +8,81 @@ const axios_1 = __importDefault(require("axios"));
 const ActionResult_1 = require("../ActionResponses/ActionResult");
 const ActionError_1 = require("../ActionResponses/ActionError");
 const GlobalVariables_1 = require("../../GlobalVariables");
+let isRefreshing = false;
+let refreshSubscribers = [];
 class HttpRequest {
     constructor() {
-        this.httpMethod = 'POST';
         this.actionResult = {};
         this.actionError = {};
     }
+    subscribeTokenRefresh(cb) {
+        refreshSubscribers.push(cb);
+    }
+    onRefreshed(token) {
+        refreshSubscribers.map(cb => cb(token));
+    }
     refreshAccessToken() {
-        if (GlobalVariables_1.getCookie('umt')) {
-            let domain = GlobalVariables_1.GlobalVariables.httpBaseUrl ? GlobalVariables_1.GlobalVariables.httpBaseUrl : GlobalVariables_1.GlobalVariables.authBaseUrl;
-            delete axios_1.default.defaults.headers.Authorization;
-            axios_1.default({
-                url: `${domain}/auth/User/loginToService`,
-                method: this.httpMethod,
-                data: {
-                    service_name: 'monolit',
-                    token: GlobalVariables_1.getCookie('umt')
-                }
-            })
-                .then((response) => {
-                // @ts-ignore
-                GlobalVariables_1.setCookie('mandate', response.action_result.data);
-                return GlobalVariables_1.getCookie('mandate');
-            })
-                .catch((error) => {
-                return error;
-            });
-        }
-        else {
-            return new ActionError_1.ActionError('Session expired!', 401).getMessage();
-        }
+        return new Promise((resolve, reject) => {
+            if (GlobalVariables_1.getCookie('umt')) {
+                let domain = GlobalVariables_1.GlobalVariables.httpBaseUrl ? GlobalVariables_1.GlobalVariables.httpBaseUrl : GlobalVariables_1.GlobalVariables.authBaseUrl;
+                delete axios_1.default.defaults.headers.Authorization;
+                GlobalVariables_1.deleteCookie('mandate');
+                axios_1.default({
+                    url: `${domain}/auth/User/loginToService`,
+                    method: 'POST',
+                    data: {
+                        service_name: 'monolit',
+                        token: GlobalVariables_1.getCookie('umt')
+                    }
+                })
+                    .then((response) => {
+                    resolve(response.data.action_result.data);
+                })
+                    .catch((error) => {
+                    reject(error);
+                });
+            }
+            else {
+                reject(new ActionError_1.ActionError('Session expired!', 401).getMessage());
+            }
+        });
     }
     axiosConnect(serviceName, modelName, actionName, httpMethod, actionParameters) {
-        return new Promise((resolve, reject) => {
-            if (actionName !== 'registerByEmailAndPassword' &&
-                actionName !== 'loginByEmailAndPassword' &&
-                actionName !== 'loginToService' &&
-                actionName !== 'getItems') {
-                axios_1.default.interceptors.request.use(config => {
-                    const token = GlobalVariables_1.getCookie('mandate');
-                    if (token) {
-                        config.headers.Authorization = token;
-                    }
-                    return config;
-                }, error => Promise.reject(error));
+        let domain = GlobalVariables_1.GlobalVariables.httpBaseUrl ? GlobalVariables_1.GlobalVariables.httpBaseUrl : GlobalVariables_1.GlobalVariables.authBaseUrl;
+        const instance = axios_1.default.create({
+            headers: {
+                'Authorization': GlobalVariables_1.getCookie('mandate')
             }
-            axios_1.default.interceptors.response.use((response) => {
-                return response;
-            }, async (error) => {
-                const originalRequest = error.config;
-                if (error.response.data.action_error.code === 500 && error.response.data.action_error.message === 'Ошибка авторизации! Срок действия токена истек!' && !originalRequest._retry) {
-                    originalRequest._retry = true;
-                    const accessToken = await this.refreshAccessToken();
-                    if (accessToken !== 'Session expired!') {
-                        axios_1.default.defaults.headers.common['Authorization'] = accessToken;
-                        return axios_1.default(originalRequest);
-                    }
-                    else {
-                        return new ActionError_1.ActionError('Session expired!', 401).getMessage();
-                    }
+        });
+        instance.interceptors.response.use(response => {
+            return response;
+        }, error => {
+            const { config } = error;
+            const originalRequest = config;
+            if (error.response.data.action_error.code === 401 && error.response.data.action_error.message === 'Token expired!') {
+                if (!isRefreshing) {
+                    isRefreshing = true;
+                    this.refreshAccessToken()
+                        .then(newToken => {
+                        isRefreshing = false;
+                        this.onRefreshed(newToken);
+                    });
                 }
+                return new Promise((resolve, reject) => {
+                    this.subscribeTokenRefresh((token) => {
+                        originalRequest.headers['Authorization'] = token;
+                        GlobalVariables_1.deleteCookie('mandate');
+                        GlobalVariables_1.setCookie('mandate', token);
+                        refreshSubscribers = [];
+                        resolve(instance(originalRequest));
+                    });
+                });
+            }
+            else {
                 return Promise.reject(error);
-            });
+            }
+        });
+        return new Promise((resolve, reject) => {
             let data;
             if (actionName !== 'registerByEmailAndPassword' &&
                 actionName !== 'loginByEmailAndPassword' &&
@@ -85,10 +98,9 @@ class HttpRequest {
                 data = actionParameters;
             }
             if (GlobalVariables_1.GlobalVariables.httpBaseUrl || GlobalVariables_1.GlobalVariables.authBaseUrl) {
-                let domain = GlobalVariables_1.GlobalVariables.httpBaseUrl ? GlobalVariables_1.GlobalVariables.httpBaseUrl : GlobalVariables_1.GlobalVariables.authBaseUrl;
-                axios_1.default({
+                instance({
                     url: `${domain}/${serviceName}/${modelName}/${actionName}`,
-                    method: this.httpMethod,
+                    method: httpMethod,
                     data: data
                 })
                     .then((response) => {
@@ -99,7 +111,6 @@ class HttpRequest {
                     .catch((error) => {
                     this.actionError = new ActionError_1.ActionError(error.response.data.error_message, error.response.status);
                     reject(this.actionError.getMessage());
-                }).then(() => {
                 });
             }
             else {

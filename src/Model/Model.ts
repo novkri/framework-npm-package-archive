@@ -1,19 +1,21 @@
 import {ModelInterface} from './ModelInterface';
 import {GetItemsAction} from '../Actions/GetItemsAction/GetItemsAction';
 import {CRUDAction} from '../Actions/CRUDActions/CRUDAction';
+import {CustomAction} from "../Actions/CustomAction/CustomAction";
 import {GetModelMetadataAction} from '../Actions/GetMetadataAction/GetModelMetadataAction';
 import {DataFormatter} from './DataFormatter';
 import {MetaDataInterface} from './MetaDataInterface';
 import {EventObserver} from '../Actions/NetworkRequests/SocketConnection/Observer';
-import {GlobalVariables, setCookie} from '../GlobalVariables';
+import {GlobalVariables, setCookie, deleteAllCookies} from '../GlobalVariables';
 import {RoutingKeyParams} from "../Actions/Interfaces/RoutingKeyParams";
+import {Method} from "axios";
 
 const observer = new EventObserver();
 
 export class Model implements ModelInterface {
     private readonly modelName: string;
-    private readonly username:string;
-    private readonly password:string;
+    private readonly username: string;
+    private readonly password: string;
     private modelMetaData!: MetaDataInterface;
     private readonly modelItems: (string | object)[];
     private modelActionList: string[];
@@ -26,7 +28,7 @@ export class Model implements ModelInterface {
     private tokenUst: boolean;
     private tokenUmt: boolean;
 
-    constructor(modelName: string, username: string, password:string) {
+    constructor(modelName: string, username: string, password: string) {
         this.modelName = modelName;
         this.username = username;
         this.password = password;
@@ -48,7 +50,7 @@ export class Model implements ModelInterface {
      */
     setObserver() {
         observer.subscribe(this.modelName, (data: any, actionName?: string) => {
-            if (data !== 'Start Processing') {
+            if (data !== 'Start Processing' && data !== 'Session expired!') {
                 switch (actionName) {
                     case 'getItems':
                         this.modelItems.push(data);
@@ -59,22 +61,25 @@ export class Model implements ModelInterface {
                     case 'getMetadata':
                         this.modelMetaData.push(data);
                         break;
-                    case 'create':
-                    case 'update':
-                    case 'delete':
-                    case 'createMany':
-                    case 'updateMany':
-                    case 'deleteMany':
-                    case 'updateManyRaw':
-                    case 'deleteManyRaw':
-                        this.actionGetItems(this.modelName, 'socket', actionName);
-                        break;
+                    // case 'create':
+                    // case 'update':
+                    // case 'delete':
+                    // case 'createMany':
+                    // case 'updateMany':
+                    // case 'deleteMany':
+                    // case 'updateManyRaw':
+                    // case 'deleteManyRaw':
+                    //     this.actionGetItems(this.modelName, 'socket', actionName);
+                    //     break;
                     case 'loginByEmailAndPassword':
                         setCookie('umt', data[0])
                         break;
                     case 'loginToService':
                         setCookie('mandate', data[0])
                 }
+            }
+            if (data === 'Session expired!') {
+                deleteAllCookies()
             }
         });
     }
@@ -90,15 +95,14 @@ export class Model implements ModelInterface {
     /**
      * Получение метаданных модели
      * @param microserviceName
-     * @param actionName
      * @param connectionType
      */
-    async actionGetMetadata(microserviceName: string, actionName: string, connectionType: string) {
+    actionGetMetadata(microserviceName: string, connectionType: string) {
         const initializeGetMetadataRequest = new GetModelMetadataAction(
             this.username,
             this.password,
             microserviceName,
-            actionName,
+            'getMetadata',
             this.modelName
         );
         Model.setConnectionType(connectionType, initializeGetMetadataRequest);
@@ -108,16 +112,14 @@ export class Model implements ModelInterface {
      * Получение данных модели с возможными параметрами, юзер передает все данные вместе, но в экшен их нужно передавать отдельно
      * @param microserviceName
      * @param connectionType
-     * @param actionName
      * @param withs
      * @param filter
      * @param orders
      * @param page
      * @param perPage
      */
-    async actionGetItems(
+    actionGetItems(
         microserviceName: string,
-        actionName: string,
         connectionType: string,
         perPage?: number,
         page?: number,
@@ -125,11 +127,11 @@ export class Model implements ModelInterface {
         withs?: string | string[],
         orders?: string[][]
     ) {
-        const initializeGetItems = new GetItemsAction(this.username, this.password, microserviceName, this.modelName, actionName);
+        const initializeGetItems = new GetItemsAction(this.username, this.password, microserviceName, this.modelName, 'getItems');
         initializeGetItems.actionParameters.with(withs)
         initializeGetItems.actionParameters.filters(filter);
         initializeGetItems.actionParameters.orders(orders);
-        if(perPage !== undefined && page !== undefined) {
+        if (perPage !== undefined && page !== undefined) {
             initializeGetItems.actionParameters.setPagination(perPage, page);
         }
         Model.setConnectionType(connectionType, initializeGetItems);
@@ -139,22 +141,20 @@ export class Model implements ModelInterface {
      * Отличается от getItems тем, что отдельно должен быть передан айди нужной записи
      * @param microserviceName
      * @param connectionType
-     * @param actionName
      * @param id
      * @param withs
      * @param filter
      * @param orders
      */
-    async actionGetItem(
+    actionGetItem(
         microserviceName: string,
-        actionName: string,
         connectionType: string,
         id: string,
         filter?: (string | object)[] | undefined,
         withs?: [],
         orders?: string[][]
     ) {
-        const initializeGetItem = new GetItemsAction(this.username, this.password, microserviceName, this.modelName, actionName);
+        const initializeGetItem = new GetItemsAction(this.username, this.password, microserviceName, this.modelName, 'getItem');
         initializeGetItem.actionParameters.with(withs);
         initializeGetItem.actionParameters.filters(filter);
         initializeGetItem.actionParameters.orders(orders);
@@ -165,13 +165,11 @@ export class Model implements ModelInterface {
     /**
      * Экшен обновления записи
      * @param microserviceName
-     * @param actionName
      * @param connectionType
      * @param actionParams
      */
-    async actionUpdate(
+    actionUpdate(
         microserviceName: string,
-        actionName: string,
         connectionType: string,
         actionParams: object
     ) {
@@ -180,7 +178,30 @@ export class Model implements ModelInterface {
             this.password,
             microserviceName,
             this.modelName,
-            actionName,
+            'update',
+            actionParams
+        );
+        Model.setConnectionType(connectionType, initializeActionUpdate);
+    }
+
+    /**
+     *
+     * @param microserviceName
+     * @param connectionType
+     * @param actionParams
+     */
+
+    actionUpdateMany(
+        microserviceName: string,
+        connectionType: string,
+        actionParams: object
+    ) {
+        const initializeActionUpdate = new CRUDAction(
+            this.username,
+            this.password,
+            microserviceName,
+            this.modelName,
+            'updateMany',
             actionParams
         );
         Model.setConnectionType(connectionType, initializeActionUpdate);
@@ -192,7 +213,7 @@ export class Model implements ModelInterface {
      * @param connectionType
      * @param actionParams
      */
-    async actionUpdateManyWithFilter(
+    actionUpdateManyWithFilter(
         microserviceName: string,
         connectionType: string,
         actionParams: object
@@ -211,14 +232,12 @@ export class Model implements ModelInterface {
     /**
      * Экшен создания записи
      * @param microserviceName
-     * @param actionName
      * @param connectionType
      * @param actionParams
      * @param channelParameters
      */
-    async actionCreate(
+    actionCreate(
         microserviceName: string,
-        actionName: string,
         connectionType: string,
         actionParams: object,
         channelParameters?: RoutingKeyParams
@@ -228,7 +247,7 @@ export class Model implements ModelInterface {
             this.password,
             microserviceName,
             this.modelName,
-            actionName,
+            'create',
             actionParams,
             channelParameters
         );
@@ -236,15 +255,36 @@ export class Model implements ModelInterface {
     }
 
     /**
-     * Экшен удаления записи
+     *
      * @param microserviceName
-     * @param actionName
      * @param connectionType
      * @param actionParams
      */
-    async actionDelete(
+
+    actionCreateMany(
         microserviceName: string,
-        actionName: string,
+        connectionType: string,
+        actionParams: object
+    ) {
+        const initializeActionCreate = new CRUDAction(
+            this.username,
+            this.password,
+            microserviceName,
+            this.modelName,
+            'createMany',
+            actionParams
+        );
+        Model.setConnectionType(connectionType, initializeActionCreate);
+    }
+
+    /**
+     * Экшен удаления записи
+     * @param microserviceName
+     * @param connectionType
+     * @param actionParams
+     */
+    actionDelete(
+        microserviceName: string,
         connectionType: string,
         actionParams: string[]
     ) {
@@ -253,7 +293,30 @@ export class Model implements ModelInterface {
             this.password,
             microserviceName,
             this.modelName,
-            actionName,
+            'delete',
+            actionParams
+        );
+        Model.setConnectionType(connectionType, initializeActionDelete);
+    }
+
+    /**
+     *
+     * @param microserviceName
+     * @param connectionType
+     * @param actionParams
+     */
+
+    actionDeleteMany(
+        microserviceName: string,
+        connectionType: string,
+        actionParams: string[]
+    ) {
+        const initializeActionDelete = new CRUDAction(
+            this.username,
+            this.password,
+            microserviceName,
+            this.modelName,
+            'deleteMany',
             actionParams
         );
         Model.setConnectionType(connectionType, initializeActionDelete);
@@ -265,7 +328,7 @@ export class Model implements ModelInterface {
      * @param connectionType
      * @param actionParams
      */
-    async actionDeleteManyWithFilter(
+    actionDeleteManyWithFilter(
         microserviceName: string,
         connectionType: string,
         actionParams: object
@@ -279,6 +342,34 @@ export class Model implements ModelInterface {
             actionParams
         );
         Model.setConnectionType(connectionType, initializeActionDeleteManyWithFilter);
+    }
+
+    /**
+     *
+     * @param microserviceName
+     * @param actionName
+     * @param connectionType
+     * @param requestType
+     * @param actionParams
+     */
+
+    actionCustom(
+        microserviceName: string,
+        actionName: string,
+        connectionType: string,
+        requestType?: Method,
+        actionParams?: object
+    ) {
+        const initializeActionCustom = new CustomAction(
+            this.username,
+            this.password,
+            microserviceName,
+            this.modelName,
+            actionName,
+            requestType,
+            actionParams
+        );
+        Model.setConnectionType(connectionType, initializeActionCustom);
     }
 
     /**
@@ -368,7 +459,8 @@ export class Model implements ModelInterface {
         GlobalVariables.httpBaseUrl = URL;
     }
 
-    socketDisconnect(){
+    socketDisconnect() {
+        observer.broadcastSocketDisconnect('disconnect')
     }
 
 }

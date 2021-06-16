@@ -26,6 +26,7 @@ export class ActionMessage implements ActionMessageInterface {
         microserviceName: string,
         actionName: string,
         modelName: string,
+        requestType?: Method,
         actionParameters?: ActionParameters,
         channelParameters?: any
     ) {
@@ -36,7 +37,7 @@ export class ActionMessage implements ActionMessageInterface {
         this.actionName = actionName;
         this.actionParameters = actionParameters;
         this.channelParameters = channelParameters;
-        this.httpMethod = 'POST';
+        this.httpMethod = requestType ? requestType : 'POST';
         this.httpRequest = new HttpRequest();
         this.socketRequest = new SocketRequest(
             this.userName,
@@ -66,16 +67,12 @@ export class ActionMessage implements ActionMessageInterface {
                 return response;
             })
             .catch((error) => {
-                observer.broadcast(error, 'error');
+                observer.broadcast(error, 'error', this.modelName);
                 return error;
             });
     }
 
     socketConnect() {
         this.socketRequest.initSocketConnect();
-    }
-
-    socketDisconnect() {
-        this.socketRequest.socketDisconnect()
     }
 }

@@ -2,15 +2,7 @@ export let observers: any[] = [];
 
 export class EventObserver {
   private static instance: EventObserver | null;
-  private type: string | undefined;
   private modelName: string | undefined;
-  setType(type: string) {
-    this.type = type;
-  }
-
-  setModel(model: string) {
-    this.modelName = model;
-  }
 
   subscribe(modelName: string, fn: any) {
     return observers.findIndex((item) => item.modelName === modelName) === -1 && observers.push({modelName, fn});
@@ -22,12 +14,22 @@ export class EventObserver {
 
   broadcast(
     data: string[] | object[] | string | object,
-    actionName: string,
+    actionName?: string,
     receivedModelName?: string
   ) {
     observers.forEach((subscriber) => {
       if (subscriber.modelName === receivedModelName) {
         subscriber.fn(data, actionName, receivedModelName);
+      }
+    });
+  }
+
+  broadcastSocketDisconnect(
+      modelName: string
+  ) {
+    observers.forEach((subscriber) => {
+      if (subscriber.modelName === modelName) {
+        subscriber.fn(modelName);
       }
     });
   }

@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCookie = exports.setCookie = exports.decipherJWT = exports.GlobalVariables = void 0;
+exports.deleteCookie = exports.deleteAllCookies = exports.getCookie = exports.setCookie = exports.decipherJWT = exports.GlobalVariables = void 0;
 class GlobalVariables {
 }
 exports.GlobalVariables = GlobalVariables;
 const decipherJWT = function (token) {
     let base64Url = token.split('.')[1];
     let base64 = base64Url.replace('-', '+').replace('_', '/');
+    // @ts-ignore
     return JSON.parse(Buffer.from(base64, 'base64').toString('binary'));
 };
 exports.decipherJWT = decipherJWT;
@@ -32,3 +33,17 @@ const getCookie = function (cname) {
     return "";
 };
 exports.getCookie = getCookie;
+const deleteAllCookies = function () {
+    let cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        let eqPos = cookie.indexOf("=");
+        let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+};
+exports.deleteAllCookies = deleteAllCookies;
+const deleteCookie = function (name) {
+    document.cookie = name + '=; expires=Thu, 01-Jan-70 00:00:01 GMT;';
+};
+exports.deleteCookie = deleteCookie;

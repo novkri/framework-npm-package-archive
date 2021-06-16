@@ -30,7 +30,7 @@ class Model {
      */
     setObserver() {
         observer.subscribe(this.modelName, (data, actionName) => {
-            if (data !== 'Start Processing') {
+            if (data !== 'Start Processing' && data !== 'Session expired!') {
                 switch (actionName) {
                     case 'getItems':
                         this.modelItems.push(data);
@@ -57,6 +57,9 @@ class Model {
                     case 'loginToService':
                         GlobalVariables_1.setCookie('mandate', data[0]);
                 }
+            }
+            if (data === 'Session expired!') {
+                GlobalVariables_1.deleteAllCookies();
             }
         });
     }
@@ -249,6 +252,7 @@ class Model {
         GlobalVariables_1.GlobalVariables.httpBaseUrl = URL;
     }
     socketDisconnect() {
+        observer.broadcastSocketDisconnect('disconnect');
     }
 }
 exports.Model = Model;

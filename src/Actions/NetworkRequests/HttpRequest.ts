@@ -2,86 +2,97 @@ import axios, {Method} from 'axios';
 import {ActionResult} from '../ActionResponses/ActionResult';
 import {ActionError} from '../ActionResponses/ActionError';
 import {ActionParameters} from '../Interfaces/ActionParameters';
-import {GlobalVariables, getCookie, setCookie} from '../../GlobalVariables';
+import {deleteCookie, getCookie, GlobalVariables, setCookie} from '../../GlobalVariables';
 import {ParametersInterface} from "./ParametersInterface";
-import {log} from "util";
+
+
+// let isRefreshing = false;
+// let refreshSubscribers: any[] = [];
 
 export class HttpRequest {
     actionResult: ActionResult;
     actionError: ActionError;
-    httpMethod: Method;
 
     constructor() {
-        this.httpMethod = 'POST';
         this.actionResult = {} as ActionResult;
         this.actionError = {} as ActionError;
     }
 
-    refreshAccessToken() {
-        if (getCookie('umt')) {
-            let domain = GlobalVariables.httpBaseUrl ? GlobalVariables.httpBaseUrl : GlobalVariables.authBaseUrl
-            delete axios.defaults.headers.Authorization;
-            axios({
-                url: `${domain}/auth/User/loginToService`,
-                method: this.httpMethod,
-                data: {
-                    service_name: 'monolit',
-                    token: getCookie('umt')
-                }
-            })
-                .then((response) => {
-                    // @ts-ignore
-                    setCookie('mandate', response.action_result.data)
-                    return getCookie('mandate')
-                })
-                .catch((error) => {
-                    return error
-                });
-        } else {
-            return new ActionError('Session expired!', 401).getMessage()
-        }
-    }
+    // subscribeTokenRefresh(cb: any) {
+    //     refreshSubscribers.push(cb);
+    // }
+    //
+    // onRefreshed(token: any) {
+    //     refreshSubscribers.map(cb => cb(token));
+    // }
+    //
+    // refreshAccessToken() {
+    //     return new Promise((resolve, reject) => {
+    //         if (getCookie('umt')) {
+    //             let domain = GlobalVariables.httpBaseUrl ? GlobalVariables.httpBaseUrl : GlobalVariables.authBaseUrl
+    //             delete axios.defaults.headers.Authorization;
+    //             deleteCookie('mandate')
+    //             axios({
+    //                 url: `${domain}/auth/User/loginToService`,
+    //                 method: 'POST',
+    //                 data: {
+    //                     service_name: 'monolit',
+    //                     token: getCookie('umt')
+    //                 }
+    //             })
+    //                 .then((response) => {
+    //                     resolve(response.data.action_result.data)
+    //                 })
+    //                 .catch((error) => {
+    //                     reject(error)
+    //                 });
+    //         } else {
+    //             reject(new ActionError('Session expired!', 401).getMessage())
+    //         }
+    //     })
+    // }
 
     axiosConnect(
         serviceName: string,
         modelName: string,
         actionName: string,
-        httpMethod: string,
+        httpMethod: Method,
         actionParameters: ActionParameters | undefined
     ) {
-        return new Promise((resolve, reject) => {
-            if (actionName !== 'registerByEmailAndPassword' &&
-                actionName !== 'loginByEmailAndPassword' &&
-                actionName !== 'loginToService' &&
-                actionName !== 'getItems'
-            ) {
-                axios.interceptors.request.use(
-                    config => {
-                        const token = getCookie('mandate');
-                        if (token) {
-                            config.headers.Authorization = token;
-                        }
-                        return config;
-                    },
-                    error => Promise.reject(error)
-                );
+        let domain = GlobalVariables.httpBaseUrl ? GlobalVariables.httpBaseUrl : GlobalVariables.authBaseUrl
+        const instance = axios.create({
+            headers: {
+                'Authorization': getCookie('mandate')
             }
-            axios.interceptors.response.use((response) => {
-                return response
-            }, async (error) => {
-                const originalRequest = error.config;
-                if (error.response.data.action_error.code === 500 && error.response.data.action_error.message === 'Ошибка авторизации! Срок действия токена истек!' && !originalRequest._retry) {
-                    originalRequest._retry = true;
-                    const accessToken = await this.refreshAccessToken();
-                    if (accessToken !== 'Session expired!') {
-                        axios.defaults.headers.common['Authorization'] = accessToken;
-                        return axios(originalRequest);
-                    } else {
-                        return new ActionError('Session expired!', 401).getMessage()
-                    }
-                }
-                return Promise.reject(error);
-            });
+        });
+        // instance.interceptors.response.use(response => {
+        //     return response;
+        // }, error => {
+        //     const {config} = error;
+        //     const originalRequest = config;
+        //     if (error.response.data.action_error.code === 401 && error.response.data.action_error.message === 'Token expired!') {
+        //         if (!isRefreshing) {
+        //             isRefreshing = true;
+        //             this.refreshAccessToken()
+        //                 .then(newToken => {
+        //                     isRefreshing = false;
+        //                     this.onRefreshed(newToken);
+        //                 });
+        //         }
+        //         return new Promise((resolve, reject) => {
+        //             this.subscribeTokenRefresh((token: any) => {
+        //                 originalRequest.headers['Authorization'] = token;
+        //                 deleteCookie('mandate')
+        //                 setCookie('mandate', token)
+        //                 refreshSubscribers = []
+        //                 resolve(instance(originalRequest));
+        //             });
+        //         });
+        //     } else {
+        //         return Promise.reject(error);
+        //     }
+        // });
+        return new Promise((resolve, reject) => {
             let data
             if (
                 actionName !== 'registerByEmailAndPassword' &&
@@ -98,10 +109,9 @@ export class HttpRequest {
                 data = actionParameters
             }
             if (GlobalVariables.httpBaseUrl || GlobalVariables.authBaseUrl) {
-                let domain = GlobalVariables.httpBaseUrl ? GlobalVariables.httpBaseUrl : GlobalVariables.authBaseUrl
-                axios({
+                instance({
                     url: `${domain}/${serviceName}/${modelName}/${actionName}`,
-                    method: this.httpMethod,
+                    method: httpMethod,
                     data: data
                 })
                     .then((response) => {
@@ -115,9 +125,7 @@ export class HttpRequest {
                     .catch((error) => {
                         this.actionError = new ActionError(error.response.data.error_message, error.response.status);
                         reject(this.actionError.getMessage());
-                    }).then(() => {
-
-                });
+                    })
             } else {
                 this.actionError = new ActionError('Укажите URL!');
                 reject(this.actionError.getMessage());

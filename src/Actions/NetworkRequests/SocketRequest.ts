@@ -6,7 +6,7 @@ import {ActionError} from '../ActionResponses/ActionError';
 import {GenerateJSON} from './GenerateJSON';
 import {ActionStartProcessing} from '../ActionResponses/ActionStartProcessing';
 import {EventObserver} from './SocketConnection/Observer';
-import {GlobalVariables, getCookie} from '../../GlobalVariables';
+import {GlobalVariables, getCookie, decipherJWT} from '../../GlobalVariables';
 import {Stomp} from 'stompjs/lib/stomp.js'
 
 const observer = new EventObserver();
@@ -71,6 +71,13 @@ export class SocketRequest {
         this.actionResult = {} as ActionResult;
         this.actionError = {} as ActionError;
         this.receivedItems = [];
+        this.setObserver();
+    }
+
+    setObserver() {
+        observer.subscribe('disconnect', () => {
+            this.socketDisconnect()
+        })
     }
 
     initSocketConnect() {
@@ -110,8 +117,7 @@ export class SocketRequest {
                             receivedItems = actionResult.getData();
                             observer.broadcast(receivedItems, actionName, modelName);
                         } else if (result.type === 'action_error') {
-                            if(result.message === 'Ошибка авторизации! Срок действия токена истек!') {
-
+                            if(result.message === 'Token expired!') {
                                 this.refreshToken()
                             }
                             const actionError = new ActionError(result.message, result.code).getMessage();
@@ -144,16 +150,18 @@ export class SocketRequest {
         } else {
             const actionError = new ActionError('Укажите URL!', 100);
             this.receivedItems = actionError.getMessage();
-            observer.broadcast(this.receivedItems, 'error');
+            observer.broadcast(this.receivedItems, 'error', this.modelName);
         }
     }
 
     socketDisconnect(){
-        client.disconnect()
-        observer.broadcast(`${this.modelName} disconnected`, 'disconnect', this.modelName);
+        client.disconnect(() => {
+            observer.broadcast(`${this.modelName} disconnected`, 'disconnect', this.modelName);
+        });
     }
 
     refreshToken(){
-
+        let currentToken = decipherJWT(getCookie('mandate'))
+        let tokenExpirationTime = currentToken.alive_until
     }
 }

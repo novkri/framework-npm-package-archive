@@ -30,6 +30,12 @@ class SocketRequest {
         this.actionResult = {};
         this.actionError = {};
         this.receivedItems = [];
+        this.setObserver();
+    }
+    setObserver() {
+        observer.subscribe('disconnect', () => {
+            this.socketDisconnect();
+        });
     }
     initSocketConnect() {
         if (GlobalVariables_1.GlobalVariables.socketBaseUrl || GlobalVariables_1.GlobalVariables.authBaseUrl) {
@@ -69,7 +75,7 @@ class SocketRequest {
                             observer.broadcast(receivedItems, actionName, modelName);
                         }
                         else if (result.type === 'action_error') {
-                            if (result.message === 'Ошибка авторизации! Срок действия токена истек!') {
+                            if (result.message === 'Token expired!') {
                                 this.refreshToken();
                             }
                             const actionError = new ActionError_1.ActionError(result.message, result.code).getMessage();
@@ -105,14 +111,17 @@ class SocketRequest {
         else {
             const actionError = new ActionError_1.ActionError('Укажите URL!', 100);
             this.receivedItems = actionError.getMessage();
-            observer.broadcast(this.receivedItems, 'error');
+            observer.broadcast(this.receivedItems, 'error', this.modelName);
         }
     }
     socketDisconnect() {
-        client.disconnect();
-        observer.broadcast(`${this.modelName} disconnected`, 'disconnect', this.modelName);
+        client.disconnect(() => {
+            observer.broadcast(`${this.modelName} disconnected`, 'disconnect', this.modelName);
+        });
     }
     refreshToken() {
+        let currentToken = GlobalVariables_1.decipherJWT(GlobalVariables_1.getCookie('mandate'));
+        let tokenExpirationTime = currentToken.alive_until;
     }
 }
 exports.SocketRequest = SocketRequest;
