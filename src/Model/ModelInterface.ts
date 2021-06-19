@@ -64,7 +64,6 @@ export interface ModelInterface {
       microserviceName: string,
       actionName: string,
       connectionType: string,
-      requestType?: Method,
       actionParams?: object
   ):void;
 

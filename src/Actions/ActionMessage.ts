@@ -26,7 +26,6 @@ export class ActionMessage implements ActionMessageInterface {
         microserviceName: string,
         actionName: string,
         modelName: string,
-        requestType?: Method,
         actionParameters?: ActionParameters,
         channelParameters?: any
     ) {
@@ -37,7 +36,7 @@ export class ActionMessage implements ActionMessageInterface {
         this.actionName = actionName;
         this.actionParameters = actionParameters;
         this.channelParameters = channelParameters;
-        this.httpMethod = requestType ? requestType : 'POST';
+        this.httpMethod = 'POST';
         this.httpRequest = new HttpRequest();
         this.socketRequest = new SocketRequest(
             this.userName,

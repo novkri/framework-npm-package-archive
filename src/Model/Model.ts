@@ -349,7 +349,6 @@ export class Model implements ModelInterface {
      * @param microserviceName
      * @param actionName
      * @param connectionType
-     * @param requestType
      * @param actionParams
      */
 
@@ -357,7 +356,6 @@ export class Model implements ModelInterface {
         microserviceName: string,
         actionName: string,
         connectionType: string,
-        requestType?: Method,
         actionParams?: object
     ) {
         const initializeActionCustom = new CustomAction(
@@ -366,7 +364,6 @@ export class Model implements ModelInterface {
             microserviceName,
             this.modelName,
             actionName,
-            requestType,
             actionParams
         );
         Model.setConnectionType(connectionType, initializeActionCustom);

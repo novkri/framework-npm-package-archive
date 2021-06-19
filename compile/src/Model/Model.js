@@ -204,11 +204,10 @@ class Model {
      * @param microserviceName
      * @param actionName
      * @param connectionType
-     * @param requestType
      * @param actionParams
      */
-    actionCustom(microserviceName, actionName, connectionType, requestType, actionParams) {
-        const initializeActionCustom = new CustomAction_1.CustomAction(this.username, this.password, microserviceName, this.modelName, actionName, requestType, actionParams);
+    actionCustom(microserviceName, actionName, connectionType, actionParams) {
+        const initializeActionCustom = new CustomAction_1.CustomAction(this.username, this.password, microserviceName, this.modelName, actionName, actionParams);
         Model.setConnectionType(connectionType, initializeActionCustom);
     }
     /**

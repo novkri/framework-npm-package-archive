@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-exports.GlobalVariables = exports.Model = exports.ActionMessage = exports.SocketRequest = exports.HttpRequest = exports.EventObserver = exports.CustomAction = exports.CRUDAction = exports.GetModelMetadataAction = exports.GetAllMetaDataAction = exports.GetItemsFilterParams = exports.GetItemsSortingParams = exports.GetItemsAction = exports.AuthAction = void 0;
 var AuthAction_1 = require("./src/Auth/AuthAction");
 exports.AuthAction = AuthAction_1.AuthAction;
 var GetItemsAction_1 = require("./src/Actions/GetItemsAction/GetItemsAction");
