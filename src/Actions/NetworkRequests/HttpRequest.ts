@@ -94,17 +94,29 @@ export class HttpRequest {
         // });
         return new Promise((resolve, reject) => {
             let data
-            if (
-                actionName !== 'registerByEmailAndPassword' &&
+            if (actionName !== 'registerByEmailAndPassword' &&
                 actionName !== 'loginByEmailAndPassword' &&
                 actionName !== 'loginToService' &&
                 actionName !== 'getItems' &&
                 actionName !== 'getItem' &&
-                actionName !== 'delete'
-            ) {
-                const parameters: ParametersInterface = {attributes: {}};
+                actionName !== 'createMany' &&
+                actionName !== 'deleteMany' &&
+                actionName !== 'updateMany' &&
+                actionName !== 'delete') {
+                const parameters = {attributes: {}};
+                // @ts-ignore
                 parameters.attributes = actionParameters;
+                console.log(parameters, 'attributes params')
                 data = parameters;
+            }else if (actionName === 'createMany' ||
+                actionName === 'deleteMany' ||
+                actionName === 'updateMany'
+            ) {
+                const actionManyParams = {objects: {}}
+                // @ts-ignore
+                actionManyParams.objects = actionParameters
+                console.log(actionManyParams, 'actionMany params')
+                data = actionManyParams
             } else {
                 data = actionParameters
             }
