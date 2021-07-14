@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 14.x
       - run: |
           sed -i -e "0,/{/ s/{/{\n\t\"version\": \"${GITHUB_REF##*/v}\",/" package.json
       - run: echo package.json
