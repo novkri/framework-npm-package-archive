@@ -135,8 +135,7 @@ export class HttpRequest {
                         resolve(this.actionResult.getData());
                     })
                     .catch((error) => {
-                        this.actionError = new ActionError(error.response.data.error_message, error.response.status);
-                        reject(this.actionError.getMessage());
+                        reject(error.response);
                     })
             } else {
                 this.actionError = new ActionError('Укажите URL!');

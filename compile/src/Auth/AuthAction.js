@@ -41,7 +41,7 @@ class AuthAction {
             return response;
         })
             .catch((error) => {
-            observer.broadcast(error, '', this.modelName);
+            observer.broadcast(error, 'error', this.modelName);
             return error;
         });
     }
