@@ -6,7 +6,7 @@ import {ActionMessageInterface} from './Interfaces/ActionMessageInterface';
 import {EventObserver} from './NetworkRequests/SocketConnection/Observer';
 import {RoutingKeyParams} from "./Interfaces/RoutingKeyParams";
 
-const observer = new EventObserver();
+const observer:EventObserver = EventObserver.getInstance();
 
 export class ActionMessage implements ActionMessageInterface {
     userName: string;

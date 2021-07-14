@@ -8,7 +8,7 @@ import { EventObserver } from '../Actions/NetworkRequests/SocketConnection/Obser
 let register = 'registerByEmailAndPassword';
 let auth = 'loginByEmailAndPassword';
 let loginIntoService = 'loginToService';
-const observer = new EventObserver();
+const observer:EventObserver = EventObserver.getInstance();
 export class AuthAction {
   private readonly microserviceName: string;
   private readonly modelName: string;

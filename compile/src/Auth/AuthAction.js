@@ -9,7 +9,7 @@ const Observer_1 = require("../Actions/NetworkRequests/SocketConnection/Observer
 let register = 'registerByEmailAndPassword';
 let auth = 'loginByEmailAndPassword';
 let loginIntoService = 'loginToService';
-const observer = new Observer_1.EventObserver();
+const observer = Observer_1.EventObserver.getInstance();
 class AuthAction {
     constructor(username, password, modelName, requestType) {
         this.microserviceName = 'auth';

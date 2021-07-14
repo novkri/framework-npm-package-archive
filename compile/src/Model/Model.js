@@ -8,7 +8,7 @@ const GetModelMetadataAction_1 = require("../Actions/GetMetadataAction/GetModelM
 const DataFormatter_1 = require("./DataFormatter");
 const Observer_1 = require("../Actions/NetworkRequests/SocketConnection/Observer");
 const GlobalVariables_1 = require("../GlobalVariables");
-const observer = new Observer_1.EventObserver();
+const observer = Observer_1.EventObserver.getInstance();
 class Model {
     constructor(modelName, username, password) {
         this.modelName = modelName;
@@ -24,46 +24,46 @@ class Model {
         this.allModelsMetadata = {};
         this.tokenUst = false;
         this.tokenUmt = false;
-        this.setObserver();
+        // this.setObserver();
     }
     /**
      * инициализация обзервера, в зависимости от экшена инициализируется нужное событие
      */
-    setObserver() {
-        observer.subscribe(this.modelName, (data, actionName) => {
-            if (data !== 'Start Processing' && data !== 'Session expired!') {
-                switch (actionName) {
-                    case 'getItems':
-                        this.modelItems.push(data);
-                        break;
-                    case 'getAllModelsMetadata':
-                        this.allModelsMetadata = data;
-                        break;
-                    case 'getMetadata':
-                        this.modelMetaData.push(data);
-                        break;
-                    // case 'create':
-                    // case 'update':
-                    // case 'delete':
-                    // case 'createMany':
-                    // case 'updateMany':
-                    // case 'deleteMany':
-                    // case 'updateManyRaw':
-                    // case 'deleteManyRaw':
-                    //     this.actionGetItems(this.modelName, 'socket', actionName);
-                    //     break;
-                    case 'loginByEmailAndPassword':
-                        GlobalVariables_1.setCookie('umt', data[0]);
-                        break;
-                    case 'loginToService':
-                        GlobalVariables_1.setCookie('mandate', data[0]);
-                }
-            }
-            if (data === 'Session expired!') {
-                GlobalVariables_1.deleteAllCookies();
-            }
-        });
-    }
+    // setObserver() {
+    //     observer.subscribe(this.modelName, (data: any, actionName?: string) => {
+    //         if (data !== 'Start Processing' && data !== 'Session expired!') {
+    //             switch (actionName) {
+    //                 case 'getItems':
+    //                     this.modelItems.push(data);
+    //                     break;
+    //                 case 'getAllModelsMetadata':
+    //                     this.allModelsMetadata = data;
+    //                     break;
+    //                 case 'getMetadata':
+    //                     this.modelMetaData.push(data);
+    //                     break;
+    //                 // case 'create':
+    //                 // case 'update':
+    //                 // case 'delete':
+    //                 // case 'createMany':
+    //                 // case 'updateMany':
+    //                 // case 'deleteMany':
+    //                 // case 'updateManyRaw':
+    //                 // case 'deleteManyRaw':
+    //                 //     this.actionGetItems(this.modelName, 'socket', actionName);
+    //                 //     break;
+    //                 case 'loginByEmailAndPassword':
+    //                     setCookie('umt', data[0])
+    //                     break;
+    //                 case 'loginToService':
+    //                     setCookie('mandate', data[0])
+    //             }
+    //         }
+    //         if (data === 'Session expired!') {
+    //             deleteAllCookies()
+    //         }
+    //     });
+    // }
     static setConnectionType(connectionType, callToAction) {
         if (connectionType === 'socket') {
             callToAction.socketConnect();

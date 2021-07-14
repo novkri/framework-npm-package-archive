@@ -9,7 +9,7 @@ import {EventObserver} from './SocketConnection/Observer';
 import {GlobalVariables, getCookie, decipherJWT} from '../../GlobalVariables';
 import {Stomp} from 'stompjs/lib/stomp.js'
 
-const observer = new EventObserver();
+const observer:EventObserver = EventObserver.getInstance();
 let client:any;
 let routingKey:any;
 export class SocketRequest {

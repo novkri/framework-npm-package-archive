@@ -1,33 +1,20 @@
 "use strict";
 exports.__esModule = true;
 var AuthAction_1 = require("./src/Auth/AuthAction");
-exports.AuthAction = AuthAction_1.AuthAction;
 var GetItemsAction_1 = require("./src/Actions/GetItemsAction/GetItemsAction");
-exports.GetItemsAction = GetItemsAction_1.GetItemsAction;
 var GetItemsSortingParams_1 = require("./src/Actions/GetItemsAction/GetItemsSortingParams");
-exports.GetItemsSortingParams = GetItemsSortingParams_1.GetItemsSortingParams;
 var GetItemsFilterParams_1 = require("./src/Actions/GetItemsAction/GetItemsFilterParams");
-exports.GetItemsFilterParams = GetItemsFilterParams_1.GetItemsFilterParams;
 var GetAllMetaDataAction_1 = require("./src/Actions/GetMetadataAction/GetAllMetaDataAction");
-exports.GetAllMetaDataAction = GetAllMetaDataAction_1.GetAllMetaDataAction;
 var GetModelMetadataAction_1 = require("./src/Actions/GetMetadataAction/GetModelMetadataAction");
-exports.GetModelMetadataAction = GetModelMetadataAction_1.GetModelMetadataAction;
 var CRUDAction_1 = require("./src/Actions/CRUDActions/CRUDAction");
-exports.CRUDAction = CRUDAction_1.CRUDAction;
 var CustomAction_1 = require("./src/Actions/CustomAction/CustomAction");
-exports.CustomAction = CustomAction_1.CustomAction;
 var Observer_1 = require("./src/Actions/NetworkRequests/SocketConnection/Observer");
-exports.EventObserver = Observer_1.EventObserver;
 var HttpRequest_1 = require("./src/Actions/NetworkRequests/HttpRequest");
-exports.HttpRequest = HttpRequest_1.HttpRequest;
 var SocketRequest_1 = require("./src/Actions/NetworkRequests/SocketRequest");
-exports.SocketRequest = SocketRequest_1.SocketRequest;
 var ActionMessage_1 = require("./src/Actions/ActionMessage");
-exports.ActionMessage = ActionMessage_1.ActionMessage;
 var Model_1 = require("./src/Model/Model");
-exports.Model = Model_1.Model;
 var GlobalVariables_1 = require("./src/GlobalVariables");
-exports.GlobalVariables = GlobalVariables_1.GlobalVariables;
+var EgalConstructor_1 = require("./src/Model/EgalConstructor");
 exports["default"] = {
     AuthAction: AuthAction_1.AuthAction,
     GetItemsAction: GetItemsAction_1.GetItemsAction,
@@ -42,5 +29,23 @@ exports["default"] = {
     SocketRequest: SocketRequest_1.SocketRequest,
     ActionMessage: ActionMessage_1.ActionMessage,
     Model: Model_1.Model,
-    GlobalVariables: GlobalVariables_1.GlobalVariables
+    GlobalVariables: GlobalVariables_1.GlobalVariables,
+    EgalConstructor: EgalConstructor_1.EgalConstructor
 };
+// export {
+//     AuthAction,
+//     GetItemsAction,
+//     GetItemsSortingParams,
+//     GetItemsFilterParams,
+//     GetAllMetaDataAction,
+//     GetModelMetadataAction,
+//     CRUDAction,
+//     CustomAction,
+//     EventObserver,
+//     HttpRequest,
+//     SocketRequest,
+//     ActionMessage,
+//     Model,
+//     GlobalVariables,
+//     EgalConstructor
+// }

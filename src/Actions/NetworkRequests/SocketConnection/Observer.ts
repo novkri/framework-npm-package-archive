@@ -4,6 +4,8 @@ export class EventObserver {
   private static instance: EventObserver | null;
   private modelName: string | undefined;
 
+  private constructor() {}
+
   subscribe(modelName: string, fn: any) {
     return observers.findIndex((item) => item.modelName === modelName) === -1 && observers.push({modelName, fn});
   }
@@ -13,9 +15,9 @@ export class EventObserver {
   }
 
   broadcast(
-    data: string[] | object[] | string | object,
-    actionName?: string,
-    receivedModelName?: string
+      data: string[] | object[] | string | object,
+      actionName?: string,
+      receivedModelName?: string
   ) {
     observers.forEach((subscriber) => {
       if (subscriber.modelName === receivedModelName) {

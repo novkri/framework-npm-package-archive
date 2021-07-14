@@ -4,7 +4,7 @@ exports.ActionMessage = void 0;
 const HttpRequest_1 = require("./NetworkRequests/HttpRequest");
 const SocketRequest_1 = require("./NetworkRequests/SocketRequest");
 const Observer_1 = require("./NetworkRequests/SocketConnection/Observer");
-const observer = new Observer_1.EventObserver();
+const observer = Observer_1.EventObserver.getInstance();
 class ActionMessage {
     constructor(userName, password, microserviceName, actionName, modelName, actionParameters, channelParameters) {
         this.userName = userName;

@@ -12,6 +12,7 @@ import {SocketRequest} from './src/Actions/NetworkRequests/SocketRequest';
 import {ActionMessage} from './src/Actions/ActionMessage';
 import {Model} from "./src/Model/Model";
 import {GlobalVariables} from "./src/GlobalVariables";
+import {EgalConstructor} from "./src/Model/EgalConstructor";
 
 export default {
     AuthAction,
@@ -27,7 +28,8 @@ export default {
     SocketRequest,
     ActionMessage,
     Model,
-    GlobalVariables
+    GlobalVariables,
+    EgalConstructor
 }
 
 export {
@@ -44,5 +46,6 @@ export {
     SocketRequest,
     ActionMessage,
     Model,
-    GlobalVariables
+    GlobalVariables,
+    EgalConstructor
 }

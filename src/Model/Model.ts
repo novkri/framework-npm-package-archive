@@ -8,14 +8,13 @@ import {MetaDataInterface} from './MetaDataInterface';
 import {EventObserver} from '../Actions/NetworkRequests/SocketConnection/Observer';
 import {GlobalVariables, setCookie, deleteAllCookies} from '../GlobalVariables';
 import {RoutingKeyParams} from "../Actions/Interfaces/RoutingKeyParams";
-import {Method} from "axios";
 
-const observer = new EventObserver();
+const observer:EventObserver = EventObserver.getInstance();
 
 export class Model implements ModelInterface {
-    private readonly modelName: string;
-    private readonly username: string;
-    private readonly password: string;
+    public modelName: string;
+    public username: string;
+    public password: string;
     private modelMetaData!: MetaDataInterface;
     private readonly modelItems: (string | object)[];
     private modelActionList: string[];
@@ -27,7 +26,7 @@ export class Model implements ModelInterface {
     private allModelsMetadata: string | object;
     private tokenUst: boolean;
     private tokenUmt: boolean;
-
+    private storeCreator: any
     constructor(modelName: string, username: string, password: string) {
         this.modelName = modelName;
         this.username = username;
@@ -42,47 +41,46 @@ export class Model implements ModelInterface {
         this.allModelsMetadata = {};
         this.tokenUst = false;
         this.tokenUmt = false;
-        this.setObserver();
+        // this.setObserver();
     }
-
     /**
      * инициализация обзервера, в зависимости от экшена инициализируется нужное событие
      */
-    setObserver() {
-        observer.subscribe(this.modelName, (data: any, actionName?: string) => {
-            if (data !== 'Start Processing' && data !== 'Session expired!') {
-                switch (actionName) {
-                    case 'getItems':
-                        this.modelItems.push(data);
-                        break;
-                    case 'getAllModelsMetadata':
-                        this.allModelsMetadata = data;
-                        break;
-                    case 'getMetadata':
-                        this.modelMetaData.push(data);
-                        break;
-                    // case 'create':
-                    // case 'update':
-                    // case 'delete':
-                    // case 'createMany':
-                    // case 'updateMany':
-                    // case 'deleteMany':
-                    // case 'updateManyRaw':
-                    // case 'deleteManyRaw':
-                    //     this.actionGetItems(this.modelName, 'socket', actionName);
-                    //     break;
-                    case 'loginByEmailAndPassword':
-                        setCookie('umt', data[0])
-                        break;
-                    case 'loginToService':
-                        setCookie('mandate', data[0])
-                }
-            }
-            if (data === 'Session expired!') {
-                deleteAllCookies()
-            }
-        });
-    }
+    // setObserver() {
+    //     observer.subscribe(this.modelName, (data: any, actionName?: string) => {
+    //         if (data !== 'Start Processing' && data !== 'Session expired!') {
+    //             switch (actionName) {
+    //                 case 'getItems':
+    //                     this.modelItems.push(data);
+    //                     break;
+    //                 case 'getAllModelsMetadata':
+    //                     this.allModelsMetadata = data;
+    //                     break;
+    //                 case 'getMetadata':
+    //                     this.modelMetaData.push(data);
+    //                     break;
+    //                 // case 'create':
+    //                 // case 'update':
+    //                 // case 'delete':
+    //                 // case 'createMany':
+    //                 // case 'updateMany':
+    //                 // case 'deleteMany':
+    //                 // case 'updateManyRaw':
+    //                 // case 'deleteManyRaw':
+    //                 //     this.actionGetItems(this.modelName, 'socket', actionName);
+    //                 //     break;
+    //                 case 'loginByEmailAndPassword':
+    //                     setCookie('umt', data[0])
+    //                     break;
+    //                 case 'loginToService':
+    //                     setCookie('mandate', data[0])
+    //             }
+    //         }
+    //         if (data === 'Session expired!') {
+    //             deleteAllCookies()
+    //         }
+    //     });
+    // }
 
     private static setConnectionType(connectionType: string, callToAction: any) {
         if (connectionType === 'socket') {

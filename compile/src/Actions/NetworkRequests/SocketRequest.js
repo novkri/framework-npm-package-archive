@@ -9,7 +9,7 @@ const ActionStartProcessing_1 = require("../ActionResponses/ActionStartProcessin
 const Observer_1 = require("./SocketConnection/Observer");
 const GlobalVariables_1 = require("../../GlobalVariables");
 const stomp_js_1 = require("stompjs/lib/stomp.js");
-const observer = new Observer_1.EventObserver();
+const observer = Observer_1.EventObserver.getInstance();
 let client;
 let routingKey;
 class SocketRequest {
