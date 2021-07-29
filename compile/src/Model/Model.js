@@ -8,6 +8,7 @@ const GetModelMetadataAction_1 = require("../Actions/GetMetadataAction/GetModelM
 const DataFormatter_1 = require("./DataFormatter");
 const Observer_1 = require("../Actions/NetworkRequests/SocketConnection/Observer");
 const GlobalVariables_1 = require("../GlobalVariables");
+const ModelConnection_1 = require("./ModelConnection");
 const observer = Observer_1.EventObserver.getInstance();
 class Model {
     constructor(modelName, username, password) {
@@ -24,54 +25,17 @@ class Model {
         this.allModelsMetadata = {};
         this.tokenUst = false;
         this.tokenUmt = false;
-        // this.setObserver();
     }
     /**
      * инициализация обзервера, в зависимости от экшена инициализируется нужное событие
      */
-    // setObserver() {
-    //     observer.subscribe(this.modelName, (data: any, actionName?: string) => {
-    //         if (data !== 'Start Processing' && data !== 'Session expired!') {
-    //             switch (actionName) {
-    //                 case 'getItems':
-    //                     this.modelItems.push(data);
-    //                     break;
-    //                 case 'getAllModelsMetadata':
-    //                     this.allModelsMetadata = data;
-    //                     break;
-    //                 case 'getMetadata':
-    //                     this.modelMetaData.push(data);
-    //                     break;
-    //                 // case 'create':
-    //                 // case 'update':
-    //                 // case 'delete':
-    //                 // case 'createMany':
-    //                 // case 'updateMany':
-    //                 // case 'deleteMany':
-    //                 // case 'updateManyRaw':
-    //                 // case 'deleteManyRaw':
-    //                 //     this.actionGetItems(this.modelName, 'socket', actionName);
-    //                 //     break;
-    //                 case 'loginByEmailAndPassword':
-    //                     setCookie('umt', data[0])
-    //                     break;
-    //                 case 'loginToService':
-    //                     setCookie('mandate', data[0])
-    //             }
-    //         }
-    //         if (data === 'Session expired!') {
-    //             deleteAllCookies()
-    //         }
-    //     });
+    // private static setConnectionType(connectionType: string, callToAction: any) {
+    //     if (connectionType === 'socket') {
+    //         callToAction.socketConnect();
+    //     } else {
+    //         callToAction.axiosConnect();
+    //     }
     // }
-    static setConnectionType(connectionType, callToAction) {
-        if (connectionType === 'socket') {
-            callToAction.socketConnect();
-        }
-        else {
-            callToAction.axiosConnect();
-        }
-    }
     /**
      * Получение метаданных модели
      * @param microserviceName
@@ -79,7 +43,7 @@ class Model {
      */
     actionGetMetadata(microserviceName, connectionType) {
         const initializeGetMetadataRequest = new GetModelMetadataAction_1.GetModelMetadataAction(this.username, this.password, microserviceName, 'getMetadata', this.modelName);
-        Model.setConnectionType(connectionType, initializeGetMetadataRequest);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeGetMetadataRequest);
     }
     /**
      * Получение данных модели с возможными параметрами, юзер передает все данные вместе, но в экшен их нужно передавать отдельно
@@ -99,7 +63,7 @@ class Model {
         if (perPage !== undefined && page !== undefined) {
             initializeGetItems.actionParameters.setPagination(perPage, page);
         }
-        Model.setConnectionType(connectionType, initializeGetItems);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeGetItems);
     }
     /**
      * Отличается от getItems тем, что отдельно должен быть передан айди нужной записи
@@ -116,7 +80,7 @@ class Model {
         initializeGetItem.actionParameters.filters(filter);
         initializeGetItem.actionParameters.orders(orders);
         initializeGetItem.actionParameters.setId(id);
-        Model.setConnectionType(connectionType, initializeGetItem);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeGetItem);
     }
     /**
      * Экшен обновления записи
@@ -126,7 +90,7 @@ class Model {
      */
     actionUpdate(microserviceName, connectionType, actionParams) {
         const initializeActionUpdate = new CRUDAction_1.CRUDAction(this.username, this.password, microserviceName, this.modelName, 'update', actionParams);
-        Model.setConnectionType(connectionType, initializeActionUpdate);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeActionUpdate);
     }
     /**
      *
@@ -136,7 +100,7 @@ class Model {
      */
     actionUpdateMany(microserviceName, connectionType, actionParams) {
         const initializeActionUpdate = new CRUDAction_1.CRUDAction(this.username, this.password, microserviceName, this.modelName, 'updateMany', actionParams);
-        Model.setConnectionType(connectionType, initializeActionUpdate);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeActionUpdate);
     }
     /**
      * Экшен обновляет записи, соответствующие заданным фильтрам
@@ -146,7 +110,7 @@ class Model {
      */
     actionUpdateManyWithFilter(microserviceName, connectionType, actionParams) {
         const initializeActionUpdateManyWithFilter = new CRUDAction_1.CRUDAction(this.username, this.password, microserviceName, this.modelName, 'updateManyRaw', actionParams);
-        Model.setConnectionType(connectionType, initializeActionUpdateManyWithFilter);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeActionUpdateManyWithFilter);
     }
     /**
      * Экшен создания записи
@@ -157,7 +121,7 @@ class Model {
      */
     actionCreate(microserviceName, connectionType, actionParams, channelParameters) {
         const initializeActionCreate = new CRUDAction_1.CRUDAction(this.username, this.password, microserviceName, this.modelName, 'create', actionParams, channelParameters);
-        Model.setConnectionType(connectionType, initializeActionCreate);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeActionCreate);
     }
     /**
      *
@@ -167,7 +131,7 @@ class Model {
      */
     actionCreateMany(microserviceName, connectionType, actionParams) {
         const initializeActionCreate = new CRUDAction_1.CRUDAction(this.username, this.password, microserviceName, this.modelName, 'createMany', actionParams);
-        Model.setConnectionType(connectionType, initializeActionCreate);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeActionCreate);
     }
     /**
      * Экшен удаления записи
@@ -177,7 +141,7 @@ class Model {
      */
     actionDelete(microserviceName, connectionType, actionParams) {
         const initializeActionDelete = new CRUDAction_1.CRUDAction(this.username, this.password, microserviceName, this.modelName, 'delete', actionParams);
-        Model.setConnectionType(connectionType, initializeActionDelete);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeActionDelete);
     }
     /**
      *
@@ -187,7 +151,7 @@ class Model {
      */
     actionDeleteMany(microserviceName, connectionType, actionParams) {
         const initializeActionDelete = new CRUDAction_1.CRUDAction(this.username, this.password, microserviceName, this.modelName, 'deleteMany', actionParams);
-        Model.setConnectionType(connectionType, initializeActionDelete);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeActionDelete);
     }
     /**
      * Экшен удаляет записи, соответствующие заданным фильтрам
@@ -197,7 +161,7 @@ class Model {
      */
     actionDeleteManyWithFilter(microserviceName, connectionType, actionParams) {
         const initializeActionDeleteManyWithFilter = new CRUDAction_1.CRUDAction(this.username, this.password, microserviceName, this.modelName, 'deleteManyRaw', actionParams);
-        Model.setConnectionType(connectionType, initializeActionDeleteManyWithFilter);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeActionDeleteManyWithFilter);
     }
     /**
      *
@@ -208,7 +172,7 @@ class Model {
      */
     actionCustom(microserviceName, actionName, connectionType, actionParams) {
         const initializeActionCustom = new CustomAction_1.CustomAction(this.username, this.password, microserviceName, this.modelName, actionName, actionParams);
-        Model.setConnectionType(connectionType, initializeActionCustom);
+        new ModelConnection_1.ModelConnection().createConnection(connectionType, initializeActionCustom);
     }
     /**
      *   позволяет получить метадату текущей модели

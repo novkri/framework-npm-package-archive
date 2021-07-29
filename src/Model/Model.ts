@@ -8,6 +8,7 @@ import {MetaDataInterface} from './MetaDataInterface';
 import {EventObserver} from '../Actions/NetworkRequests/SocketConnection/Observer';
 import {GlobalVariables, setCookie, deleteAllCookies} from '../GlobalVariables';
 import {RoutingKeyParams} from "../Actions/Interfaces/RoutingKeyParams";
+import {ModelConnection} from "./ModelConnection";
 
 const observer:EventObserver = EventObserver.getInstance();
 
@@ -41,54 +42,17 @@ export class Model implements ModelInterface {
         this.allModelsMetadata = {};
         this.tokenUst = false;
         this.tokenUmt = false;
-        // this.setObserver();
     }
     /**
      * инициализация обзервера, в зависимости от экшена инициализируется нужное событие
      */
-    // setObserver() {
-    //     observer.subscribe(this.modelName, (data: any, actionName?: string) => {
-    //         if (data !== 'Start Processing' && data !== 'Session expired!') {
-    //             switch (actionName) {
-    //                 case 'getItems':
-    //                     this.modelItems.push(data);
-    //                     break;
-    //                 case 'getAllModelsMetadata':
-    //                     this.allModelsMetadata = data;
-    //                     break;
-    //                 case 'getMetadata':
-    //                     this.modelMetaData.push(data);
-    //                     break;
-    //                 // case 'create':
-    //                 // case 'update':
-    //                 // case 'delete':
-    //                 // case 'createMany':
-    //                 // case 'updateMany':
-    //                 // case 'deleteMany':
-    //                 // case 'updateManyRaw':
-    //                 // case 'deleteManyRaw':
-    //                 //     this.actionGetItems(this.modelName, 'socket', actionName);
-    //                 //     break;
-    //                 case 'loginByEmailAndPassword':
-    //                     setCookie('umt', data[0])
-    //                     break;
-    //                 case 'loginToService':
-    //                     setCookie('mandate', data[0])
-    //             }
-    //         }
-    //         if (data === 'Session expired!') {
-    //             deleteAllCookies()
-    //         }
-    //     });
+    // private static setConnectionType(connectionType: string, callToAction: any) {
+    //     if (connectionType === 'socket') {
+    //         callToAction.socketConnect();
+    //     } else {
+    //         callToAction.axiosConnect();
+    //     }
     // }
-
-    private static setConnectionType(connectionType: string, callToAction: any) {
-        if (connectionType === 'socket') {
-            callToAction.socketConnect();
-        } else {
-            callToAction.axiosConnect();
-        }
-    }
 
     /**
      * Получение метаданных модели
@@ -103,7 +67,7 @@ export class Model implements ModelInterface {
             'getMetadata',
             this.modelName
         );
-        Model.setConnectionType(connectionType, initializeGetMetadataRequest);
+        new ModelConnection().createConnection(connectionType, initializeGetMetadataRequest)
     }
 
     /**
@@ -132,7 +96,7 @@ export class Model implements ModelInterface {
         if (perPage !== undefined && page !== undefined) {
             initializeGetItems.actionParameters.setPagination(perPage, page);
         }
-        Model.setConnectionType(connectionType, initializeGetItems);
+        new ModelConnection().createConnection(connectionType, initializeGetItems)
     }
 
     /**
@@ -157,7 +121,7 @@ export class Model implements ModelInterface {
         initializeGetItem.actionParameters.filters(filter);
         initializeGetItem.actionParameters.orders(orders);
         initializeGetItem.actionParameters.setId(id);
-        Model.setConnectionType(connectionType, initializeGetItem);
+        new ModelConnection().createConnection(connectionType, initializeGetItem)
     }
 
     /**
@@ -179,7 +143,7 @@ export class Model implements ModelInterface {
             'update',
             actionParams
         );
-        Model.setConnectionType(connectionType, initializeActionUpdate);
+        new ModelConnection().createConnection(connectionType, initializeActionUpdate)
     }
 
     /**
@@ -202,7 +166,7 @@ export class Model implements ModelInterface {
             'updateMany',
             actionParams
         );
-        Model.setConnectionType(connectionType, initializeActionUpdate);
+        new ModelConnection().createConnection(connectionType, initializeActionUpdate)
     }
 
     /**
@@ -224,7 +188,7 @@ export class Model implements ModelInterface {
             'updateManyRaw',
             actionParams
         );
-        Model.setConnectionType(connectionType, initializeActionUpdateManyWithFilter);
+        new ModelConnection().createConnection(connectionType, initializeActionUpdateManyWithFilter)
     }
 
     /**
@@ -249,7 +213,7 @@ export class Model implements ModelInterface {
             actionParams,
             channelParameters
         );
-        Model.setConnectionType(connectionType, initializeActionCreate);
+        new ModelConnection().createConnection(connectionType, initializeActionCreate)
     }
 
     /**
@@ -272,7 +236,7 @@ export class Model implements ModelInterface {
             'createMany',
             actionParams
         );
-        Model.setConnectionType(connectionType, initializeActionCreate);
+        new ModelConnection().createConnection(connectionType, initializeActionCreate)
     }
 
     /**
@@ -294,7 +258,7 @@ export class Model implements ModelInterface {
             'delete',
             actionParams
         );
-        Model.setConnectionType(connectionType, initializeActionDelete);
+        new ModelConnection().createConnection(connectionType, initializeActionDelete)
     }
 
     /**
@@ -317,7 +281,7 @@ export class Model implements ModelInterface {
             'deleteMany',
             actionParams
         );
-        Model.setConnectionType(connectionType, initializeActionDelete);
+        new ModelConnection().createConnection(connectionType, initializeActionDelete)
     }
 
     /**
@@ -339,7 +303,7 @@ export class Model implements ModelInterface {
             'deleteManyRaw',
             actionParams
         );
-        Model.setConnectionType(connectionType, initializeActionDeleteManyWithFilter);
+        new ModelConnection().createConnection(connectionType, initializeActionDeleteManyWithFilter)
     }
 
     /**
@@ -364,7 +328,7 @@ export class Model implements ModelInterface {
             actionName,
             actionParams
         );
-        Model.setConnectionType(connectionType, initializeActionCustom);
+        new ModelConnection().createConnection(connectionType, initializeActionCustom)
     }
 
     /**

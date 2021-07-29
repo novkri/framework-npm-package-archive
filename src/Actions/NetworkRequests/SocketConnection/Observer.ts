@@ -11,7 +11,7 @@ export class EventObserver {
   }
 
   unsubscribe(modelName: string) {
-    return observers.filter((subscriber) => subscriber.modelName !== modelName);
+    return observers = observers.filter((subscriber) => subscriber.modelName !== modelName);
   }
 
   broadcast(

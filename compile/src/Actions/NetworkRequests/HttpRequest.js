@@ -96,7 +96,6 @@ class HttpRequest {
                 const parameters = { attributes: {} };
                 // @ts-ignore
                 parameters.attributes = actionParameters;
-                console.log(parameters, 'attributes params');
                 data = parameters;
             }
             else if (actionName === 'createMany' ||
@@ -105,7 +104,6 @@ class HttpRequest {
                 const actionManyParams = { objects: {} };
                 // @ts-ignore
                 actionManyParams.objects = actionParameters;
-                console.log(actionManyParams, 'actionMany params');
                 data = actionManyParams;
             }
             else {
