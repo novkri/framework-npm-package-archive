@@ -29,6 +29,9 @@ class GetItemsSortingParams {
             }
             return this.order;
         }
+        else {
+            return this.order;
+        }
     }
 }
 exports.GetItemsSortingParams = GetItemsSortingParams;

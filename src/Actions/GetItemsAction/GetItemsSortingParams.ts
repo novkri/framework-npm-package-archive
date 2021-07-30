@@ -9,7 +9,7 @@ export class GetItemsSortingParams {
    * Функция формирует массив с выбранными пользователем сортировками для передачи в параметры запроса
    * @param receivedOrderArr
    */
-  createOrderObj(receivedOrderArr: string[][] | string[] | undefined) {
+  createOrderObj(receivedOrderArr: (string[] | string)[] | undefined) {
     if (receivedOrderArr) {
       if (receivedOrderArr.length <= 1) {
         const orderObj = {
@@ -27,6 +27,9 @@ export class GetItemsSortingParams {
         }
       }
       return this.order;
+    }
+    else {
+      return this.order
     }
   }
 }

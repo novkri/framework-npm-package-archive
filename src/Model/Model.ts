@@ -6,7 +6,7 @@ import {GetModelMetadataAction} from '../Actions/GetMetadataAction/GetModelMetad
 import {DataFormatter} from './DataFormatter';
 import {MetaDataInterface} from './MetaDataInterface';
 import {EventObserver} from '../Actions/NetworkRequests/SocketConnection/Observer';
-import {GlobalVariables, setCookie, deleteAllCookies} from '../GlobalVariables';
+import {GlobalVariables} from '../GlobalVariables';
 import {RoutingKeyParams} from "../Actions/Interfaces/RoutingKeyParams";
 import {ModelConnection} from "./ModelConnection";
 
@@ -27,7 +27,6 @@ export class Model implements ModelInterface {
     private allModelsMetadata: string | object;
     private tokenUst: boolean;
     private tokenUmt: boolean;
-    private storeCreator: any
     constructor(modelName: string, username: string, password: string) {
         this.modelName = modelName;
         this.username = username;
@@ -43,16 +42,6 @@ export class Model implements ModelInterface {
         this.tokenUst = false;
         this.tokenUmt = false;
     }
-    /**
-     * инициализация обзервера, в зависимости от экшена инициализируется нужное событие
-     */
-    // private static setConnectionType(connectionType: string, callToAction: any) {
-    //     if (connectionType === 'socket') {
-    //         callToAction.socketConnect();
-    //     } else {
-    //         callToAction.axiosConnect();
-    //     }
-    // }
 
     /**
      * Получение метаданных модели

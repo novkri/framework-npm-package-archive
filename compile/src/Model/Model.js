@@ -27,16 +27,6 @@ class Model {
         this.tokenUmt = false;
     }
     /**
-     * инициализация обзервера, в зависимости от экшена инициализируется нужное событие
-     */
-    // private static setConnectionType(connectionType: string, callToAction: any) {
-    //     if (connectionType === 'socket') {
-    //         callToAction.socketConnect();
-    //     } else {
-    //         callToAction.axiosConnect();
-    //     }
-    // }
-    /**
      * Получение метаданных модели
      * @param microserviceName
      * @param connectionType
