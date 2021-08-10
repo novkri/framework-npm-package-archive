@@ -23,6 +23,7 @@ class GetItemsFilterParams {
      * @param filterItem
      */
     createDefaultObjectInstance(filterItem) {
+        var _a;
         let defaultFilterArr;
         let leftArrPart;
         let rightArrPart;
@@ -32,7 +33,12 @@ class GetItemsFilterParams {
             leftArrPart = [filterItem.left.field, filterItem.left.operator, filterItem.left.value];
             rightArrPart = [filterItem.right.field, filterItem.right.operator, filterItem.right.value];
             defaultFilterArr = [leftArrPart, filterItem.type, rightArrPart];
-            this.tempArr.push(defaultFilterArr);
+            if (((_a = this.userFilterInput) === null || _a === void 0 ? void 0 : _a.length) === 1) {
+                this.tempArr = defaultFilterArr;
+            }
+            else {
+                this.tempArr.push(defaultFilterArr);
+            }
         }
         else if (Array.isArray(filterItem.value)) {
             filterItem.value.forEach((valueItem) => {
@@ -52,13 +58,16 @@ class GetItemsFilterParams {
      * Функция формирует массив из всех примененных фильтров для отправки в запросе
      */
     formFilterObject() {
-        if (this.tempArr.length >= 1) {
+        var _a;
+        // @ts-ignore
+        if (this.tempArr.length > 1 && ((_a = this.userFilterInput) === null || _a === void 0 ? void 0 : _a.length) > 1) {
             this.filter = this.tempArr
                 .map((e, i) => (i < this.tempArr.length - 1 ? [e, 'AND'] : [e]))
                 .reduce((a, b) => a.concat(b));
             return this.filter;
         }
         else {
+            this.filter = this.tempArr;
             return this.filter;
         }
     }

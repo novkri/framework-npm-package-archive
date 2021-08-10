@@ -51,7 +51,11 @@ export class GetItemsFilterParams {
       leftArrPart = [filterItem.left.field, filterItem.left.operator, filterItem.left.value];
       rightArrPart = [filterItem.right.field, filterItem.right.operator, filterItem.right.value];
       defaultFilterArr = [leftArrPart, filterItem.type, rightArrPart];
-      this.tempArr.push(defaultFilterArr);
+      if(this.userFilterInput?.length === 1) {
+        this.tempArr = defaultFilterArr;
+      } else {
+        this.tempArr.push(defaultFilterArr);
+      }
     } else if (Array.isArray(filterItem.value)){
       filterItem.value.forEach((valueItem) => {
         defaultFilterArr = [filterItem.field, filterItem.operator, valueItem]
@@ -70,12 +74,14 @@ export class GetItemsFilterParams {
    * Функция формирует массив из всех примененных фильтров для отправки в запросе
    */
   formFilterObject() {
-    if (this.tempArr.length >= 1) {
+    // @ts-ignore
+    if (this.tempArr.length > 1 && this.userFilterInput?.length > 1) {
       this.filter = this.tempArr
         .map((e, i) => (i < this.tempArr.length - 1 ? [e, 'AND'] : [e]))
         .reduce((a, b) => a.concat(b));
       return this.filter;
     } else {
+      this.filter= this.tempArr
       return this.filter;
     }
   }
