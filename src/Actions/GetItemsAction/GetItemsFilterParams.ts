@@ -3,8 +3,6 @@ export class GetItemsFilterParams {
     tempArr: (string | object)[];
     userFilterInput: (string | object)[] | undefined;
     defaultFilterArr: any;
-    nestedLeftArrPart: any;
-    nestedRightArrPart: any;
     multiFilterField: any;
 
     constructor(filterObj: (string | object)[] | undefined) {
@@ -76,7 +74,6 @@ export class GetItemsFilterParams {
                 this.formComplexRightNestedValue(filterItem)
             }
             if (filterItem.left.left && filterItem.right.left) {
-                this.formComplexDoubleNestedFilter(filterItem)
             }
         } else if (Array.isArray(filterItem.value)) {
             filterItem.value.forEach((valueItem:any) => {
@@ -133,7 +130,7 @@ export class GetItemsFilterParams {
                 temporalFilterArr = [filterItem.right.field, filterItem.right.operator, valueItem]
                 filterAllRightPart.push(temporalFilterArr)
             })
-            multiFilterRightField = filterAllRight.map((e, i) => (i < filterAllRight.length - 1 ? [e, 'OR'] : [e]))
+            multiFilterRightField = filterAllRightPart.map((e, i) => (i < filterAllRightPart.length - 1 ? [e, 'OR'] : [e]))
                 .reduce((a, b) => a.concat(b));
             rightFilterPart.push(multiFilterRightField)
         } else {
@@ -144,7 +141,7 @@ export class GetItemsFilterParams {
         if (this.userFilterInput?.length === 1) {
             this.tempArr = this.defaultFilterArr;
         } else {
-            this.tempArr.push(this.defaultFilterArr);
+            this.tempArr.push([this.defaultFilterArr]);
         }
     }
 
@@ -174,12 +171,14 @@ export class GetItemsFilterParams {
         }
         if (Array.isArray(filterItem.right.right.value)) {
             filterItem.right.right.value.forEach((valueItem: any) => {
-                temporalLeftFilterArr = [filterItem.right.left.field, filterItem.right.left.operator, valueItem]
+                temporalLeftFilterArr = [filterItem.right.right.field, filterItem.right.right.operator, valueItem]
                 filterAllLeft.push(temporalLeftFilterArr)
             })
             multiFilterLeftField = filterAllLeft.map((e, i) => (i < filterAllLeft.length - 1 ? [e, 'OR'] : [e]))
                 .reduce((a, b) => a.concat(b));
             leftComplexFilter.push(multiFilterLeftField)
+            defaultNestedFilterArr.push(leftComplexFilter)
+            defaultNestedFilterArr.push(filterItem.right.type)
         } else {
             leftComplexFilter = [filterItem.right.left.field, filterItem.right.left.operator, filterItem.right.left.value]
         }
@@ -188,28 +187,21 @@ export class GetItemsFilterParams {
                 temporalFilterArr = [filterItem.left.field, filterItem.left.operator, valueItem]
                 filterAllLeftPart.push(temporalFilterArr)
             })
-            multiFilterLeftField = filterAllLeft.map((e, i) => (i < filterAllLeft.length - 1 ? [e, 'OR'] : [e]))
+            multiFilterLeftField = filterAllLeftPart.map((e, i) => (i < filterAllLeftPart.length - 1 ? [e, 'OR'] : [e]))
                 .reduce((a, b) => a.concat(b));
             leftFilterPart.push(multiFilterLeftField)
+            defaultNestedFilterArr.push(leftFilterPart)
         } else {
             leftFilterPart = [filterItem.right.field, filterItem.right.operator, filterItem.right.value];
         }
-        defaultNestedFilterArr = [leftComplexFilter, filterItem.right.type, rightComplexFilter]
+        defaultNestedFilterArr = [leftComplexFilter, filterItem.right.type, rightComplexFilter];
         this.defaultFilterArr = [leftFilterPart, filterItem.type, defaultNestedFilterArr];
         if (this.userFilterInput?.length === 1) {
             this.tempArr = this.defaultFilterArr;
         } else {
-            this.tempArr.push(this.defaultFilterArr);
+            this.tempArr.push([this.defaultFilterArr]);
         }
     }
-
-    formComplexDoubleNestedFilter(filterItem: any) {
-        if (!Array.isArray(filterItem.left.left.value)
-            && !Array.isArray(filterItem.left.right.value)
-            && !Array.isArray(filterItem.right.left.value)
-            && !Array.isArray(filterItem.right.right.value)) {}
-    }
-
 
     /**
      * Функция формирует массив из всех примененных фильтров для отправки в запросе
@@ -220,6 +212,7 @@ export class GetItemsFilterParams {
             this.filter = this.tempArr
                 .map((e, i) => (i < this.tempArr.length - 1 ? [e, 'AND'] : [e]))
                 .reduce((a, b) => a.concat(b));
+            console.log(this.filter, 'this filter')
             return this.filter;
         } else {
             this.filter = this.tempArr
