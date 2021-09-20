@@ -80,10 +80,12 @@ export class Model implements ModelInterface {
         page?: number,
         filter?: (string | object)[] | undefined,
         withs?: string | string[],
-        orders?: string[][]
+        orders?: string[][],
+        actionName?:string,
     ) {
+        let userGetItems = actionName !== undefined ? actionName : 'getItems'
         GlobalVariables.tokenUST = microserviceName
-        const initializeGetItems = new GetItemsAction(this.username, this.password, microserviceName, this.modelName, 'getItems');
+        const initializeGetItems = new GetItemsAction(this.username, this.password, microserviceName, this.modelName, userGetItems);
         initializeGetItems.actionParameters.with(withs)
         initializeGetItems.actionParameters.filters(filter);
         initializeGetItems.actionParameters.orders(orders);

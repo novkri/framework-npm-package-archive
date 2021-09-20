@@ -49,9 +49,10 @@ class Model {
      * @param page
      * @param perPage
      */
-    actionGetItems(microserviceName, connectionType, perPage, page, filter, withs, orders) {
+    actionGetItems(microserviceName, connectionType, perPage, page, filter, withs, orders, actionName) {
+        let userGetItems = actionName !== undefined ? actionName : 'getItems';
         GlobalVariables_1.GlobalVariables.tokenUST = microserviceName;
-        const initializeGetItems = new GetItemsAction_1.GetItemsAction(this.username, this.password, microserviceName, this.modelName, 'getItems');
+        const initializeGetItems = new GetItemsAction_1.GetItemsAction(this.username, this.password, microserviceName, this.modelName, userGetItems);
         initializeGetItems.actionParameters.with(withs);
         initializeGetItems.actionParameters.filters(filter);
         initializeGetItems.actionParameters.orders(orders);
