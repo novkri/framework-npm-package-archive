@@ -85,30 +85,32 @@ class HttpRequest {
         // });
         return new Promise((resolve, reject) => {
             let data;
-            if (actionName !== 'registerByEmailAndPassword' &&
-                actionName !== 'loginByEmailAndPassword' &&
-                actionName !== 'loginToService' &&
-                actionName !== 'getItems' &&
-                actionName !== 'getItem' &&
-                actionName !== 'createMany' &&
-                actionName !== 'deleteMany' &&
-                actionName !== 'updateMany' &&
-                actionName !== 'delete') {
-                const parameters = { attributes: {} };
-                // @ts-ignore
-                parameters.attributes = actionParameters;
-                data = parameters;
-            }
-            else if (actionName === 'createMany' ||
-                actionName === 'deleteMany' ||
-                actionName === 'updateMany') {
-                const actionManyParams = { objects: {} };
-                // @ts-ignore
-                actionManyParams.objects = actionParameters;
-                data = actionManyParams;
-            }
-            else {
-                data = actionParameters;
+            switch (actionName) {
+                case 'registerByEmailAndPassword':
+                case 'loginByEmailAndPassword':
+                case 'loginToService':
+                case 'getItems':
+                case 'getItem':
+                case 'createMany':
+                case 'deleteMany':
+                case 'updateMany':
+                case 'delete':
+                case 'getCount':
+                    data = actionParameters;
+                    break;
+                case 'createMany':
+                case 'deleteMany':
+                case 'updateMany':
+                    const actionManyParams = { objects: {} };
+                    // @ts-ignore
+                    actionManyParams.objects = actionParameters;
+                    data = actionManyParams;
+                    break;
+                default:
+                    const parameters = { attributes: {} };
+                    // @ts-ignore
+                    parameters.attributes = actionParameters;
+                    data = parameters;
             }
             if (GlobalVariables_1.GlobalVariables.httpBaseUrl || GlobalVariables_1.GlobalVariables.authBaseUrl) {
                 instance({
