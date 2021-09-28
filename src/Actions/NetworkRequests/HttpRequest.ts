@@ -61,11 +61,10 @@ export class HttpRequest {
     ) {
         let domain = GlobalVariables.httpBaseUrl ? GlobalVariables.httpBaseUrl : GlobalVariables.authBaseUrl
         let userTokenName = tokenName ? tokenName : GlobalVariables.tokenUST
-        const instance = axios.create({
-            headers: {
-                'Authorization': getCookie(userTokenName)
-            }
-        });
+        let instance = axios.create()
+        if(actionName !== 'registerByEmailAndPassword' && actionName !== 'loginByEmailAndPassword' && actionName !== 'loginToService') {
+            instance.defaults.headers.common['Authorization'] = getCookie(userTokenName);
+        }
         // instance.interceptors.response.use(response => {
         //     return response;
         // }, error => {
@@ -101,9 +100,6 @@ export class HttpRequest {
                 case 'loginToService':
                 case 'getItems':
                 case 'getItem':
-                case 'createMany':
-                case 'deleteMany':
-                case 'updateMany':
                 case 'delete':
                 case 'getCount':
                     data = actionParameters;
