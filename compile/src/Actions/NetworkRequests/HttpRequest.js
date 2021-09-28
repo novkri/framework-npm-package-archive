@@ -51,11 +51,10 @@ class HttpRequest {
     axiosConnect(serviceName, modelName, actionName, httpMethod, actionParameters, tokenName) {
         let domain = GlobalVariables_1.GlobalVariables.httpBaseUrl ? GlobalVariables_1.GlobalVariables.httpBaseUrl : GlobalVariables_1.GlobalVariables.authBaseUrl;
         let userTokenName = tokenName ? tokenName : GlobalVariables_1.GlobalVariables.tokenUST;
-        const instance = axios_1.default.create({
-            headers: {
-                'Authorization': GlobalVariables_1.getCookie(userTokenName)
-            }
-        });
+        let instance = axios_1.default.create();
+        if (actionName !== 'registerByEmailAndPassword' && actionName !== 'loginByEmailAndPassword' && actionName !== 'loginToService') {
+            instance.defaults.headers.common['Authorization'] = GlobalVariables_1.getCookie(userTokenName);
+        }
         // instance.interceptors.response.use(response => {
         //     return response;
         // }, error => {
@@ -91,9 +90,6 @@ class HttpRequest {
                 case 'loginToService':
                 case 'getItems':
                 case 'getItem':
-                case 'createMany':
-                case 'deleteMany':
-                case 'updateMany':
                 case 'delete':
                 case 'getCount':
                     data = actionParameters;
