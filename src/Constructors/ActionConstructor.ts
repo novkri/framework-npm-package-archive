@@ -1,11 +1,11 @@
-import { ActionConstructorInterface } from "./Interfaces/ActionConstructorInterface";
-import { GetItemsFilterParams } from "./GetItemsAction/GetItemsFilterParams";
-import { GetItemsSortingParams } from "./GetItemsAction/GetItemsSortingParams";
+import { ActionConstructorInterface } from "../Actions/Interfaces/ActionConstructorInterface";
+import { GetItemsFilterParams } from "../Actions/GetItemsAction/GetItemsFilterParams";
+import { GetItemsSortingParams } from "../Actions/GetItemsAction/GetItemsSortingParams";
 import { GlobalVariables } from "../GlobalVariables";
-import { CRUDAction } from "./CRUDActions/CRUDAction";
-import { GetModelMetadataAction } from "./GetMetadataAction/GetModelMetadataAction";
-import { CustomAction } from "./CustomAction/CustomAction";
-import { GetItemsAction } from "./GetItemsAction/GetItemsAction";
+import { CRUDAction } from "../Actions/CRUDActions/CRUDAction";
+import { GetModelMetadataAction } from "../Actions/GetMetadataAction/GetModelMetadataAction";
+import { CustomAction } from "../Actions/CustomAction/CustomAction";
+import { GetItemsAction } from "../Actions/GetItemsAction/GetItemsAction";
 
 export class ActionConstructor implements ActionConstructorInterface {
   filterArr: (string | object)[];
@@ -15,7 +15,7 @@ export class ActionConstructor implements ActionConstructorInterface {
   modelName: string;
   actionName: string;
   actionParams: Array<object> | object;
-  pagination: { per_page: number; page: number };
+  pagination: { per_page: number | undefined; page: number | undefined };
   id: string | number;
   url: string;
   constructor(url: string) {
@@ -26,7 +26,7 @@ export class ActionConstructor implements ActionConstructorInterface {
     this.modelName = "";
     this.actionName = "";
     this.actionParams = [];
-    this.pagination = { per_page: 10, page: 1 };
+    this.pagination = { per_page: undefined, page: undefined };
     this.id = "";
     this.url = url;
     this.setBaseUrl(this.url);
