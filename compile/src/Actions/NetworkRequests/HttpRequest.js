@@ -84,7 +84,7 @@ class HttpRequest {
                             resolve(instance(originalRequest));
                         })
                             .catch((error) => {
-                            console.log(error);
+                            reject(error);
                         });
                     });
                 });
