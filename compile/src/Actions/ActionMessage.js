@@ -12,7 +12,7 @@ class ActionMessage {
         this.actionName = actionName;
         this.actionParameters = actionParameters;
         this.channelParameters = channelParameters;
-        this.httpMethod = "POST";
+        this.httpMethod = 'POST';
         this.httpRequest = new HttpRequest_1.HttpRequest();
         this.socketRequest = new SocketRequest_1.SocketRequest(this.serviceName, this.actionName, this.modelName, this.actionParameters, this.channelParameters);
     }
@@ -31,8 +31,8 @@ class ActionMessage {
             })
                 .catch((error) => {
                 constructorRequest
-                    ? reject(error.data.action_error ? error.data.action_error : error)
-                    : observer.broadcast(error, "error", this.modelName);
+                    ? reject(error.data.action_error)
+                    : observer.broadcast(error, 'error', this.modelName);
             });
         });
     }

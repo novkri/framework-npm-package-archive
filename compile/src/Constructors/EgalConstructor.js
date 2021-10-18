@@ -23,7 +23,7 @@ class EgalConstructor extends Model_1.Model {
         return new Promise((resolve, reject) => {
             this.egalObserver.subscribe(this.modelName, (data, actionName, modelName, actionMessage) => {
                 let receivedData;
-                if (actionName !== "error") {
+                if (actionName !== 'error') {
                     receivedData = [data[0], actionName, modelName, actionMessage];
                     resolve(receivedData);
                 }

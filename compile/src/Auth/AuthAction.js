@@ -5,15 +5,15 @@ const HttpRequest_1 = require("../Actions/NetworkRequests/HttpRequest");
 const SocketRequest_1 = require("../Actions/NetworkRequests/SocketRequest");
 const AuthParams_1 = require("./AuthParams");
 const GlobalVariables_1 = require("../GlobalVariables");
-let register = "registerByEmailAndPassword";
-let auth = "loginByEmailAndPassword";
-let loginIntoService = "loginToService";
+let register = 'registerByEmailAndPassword';
+let auth = 'loginByEmailAndPassword';
+let loginIntoService = 'loginToService';
 class AuthAction {
     constructor(modelName, requestType) {
-        this.microserviceName = "auth";
+        this.microserviceName = 'auth';
         this.modelName = modelName;
-        this.httpMethod = "POST";
-        this.requestAction = "";
+        this.httpMethod = 'POST';
+        this.requestAction = '';
         this.requestType = requestType;
         this.httpRequest = new HttpRequest_1.HttpRequest();
     }
@@ -30,7 +30,7 @@ class AuthAction {
         return new Promise((resolve, reject) => {
             let authParams = new AuthParams_1.AuthParams().setAuthParams(userData);
             let socketRequest = new SocketRequest_1.SocketRequest(this.microserviceName, requestType, this.modelName, authParams);
-            if (this.requestType === "socket") {
+            if (this.requestType === 'socket') {
                 socketRequest.initSocketConnect();
             }
             else {
@@ -43,7 +43,7 @@ class AuthAction {
                     resolve(returnItems);
                 })
                     .catch((error) => {
-                    let returnError = [error, "error", this.modelName];
+                    let returnError = [error, 'error', this.modelName];
                     reject(returnError);
                 });
             }
@@ -64,7 +64,7 @@ class AuthAction {
         return new Promise((resolve, reject) => {
             this.setNetworkRequest(createdUserData, auth)
                 .then((data) => {
-                sessionStorage.setItem("umt", data[0]);
+                sessionStorage.setItem('umt', data[0]);
                 resolve(data);
             })
                 .catch((error) => {

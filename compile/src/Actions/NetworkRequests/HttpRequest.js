@@ -22,7 +22,7 @@ class HttpRequest {
     }
     refreshAccessToken(serviceName) {
         return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem("umt")) {
+            if (sessionStorage.getItem('umt')) {
                 let domain = GlobalVariables_1.GlobalVariables.httpBaseUrl
                     ? GlobalVariables_1.GlobalVariables.httpBaseUrl
                     : GlobalVariables_1.GlobalVariables.authBaseUrl;
@@ -30,11 +30,11 @@ class HttpRequest {
                 GlobalVariables_1.deleteCookie(serviceName);
                 axios_1.default({
                     url: `${domain}/auth/User/loginToService`,
-                    method: "POST",
+                    method: 'POST',
                     data: {
                         service_name: serviceName,
-                        token: sessionStorage.getItem("umt"),
-                    },
+                        token: sessionStorage.getItem('umt')
+                    }
                 })
                     .then((response) => {
                     resolve(response.data.action_result.data);
@@ -44,7 +44,7 @@ class HttpRequest {
                 });
             }
             else {
-                reject(new ActionError_1.ActionError("Session expired!", 401).getMessage());
+                reject(new ActionError_1.ActionError('Session expired!', 401).getMessage());
             }
         });
     }
@@ -54,11 +54,10 @@ class HttpRequest {
             : GlobalVariables_1.GlobalVariables.authBaseUrl;
         let userTokenName = tokenName ? tokenName : GlobalVariables_1.GlobalVariables.tokenUST;
         let instance = axios_1.default.create();
-        if (actionName !== "registerByEmailAndPassword" &&
-            actionName !== "loginByEmailAndPassword" &&
-            actionName !== "loginToService") {
-            instance.defaults.headers.common["Authorization"] =
-                GlobalVariables_1.getCookie(userTokenName);
+        if (actionName !== 'registerByEmailAndPassword' &&
+            actionName !== 'loginByEmailAndPassword' &&
+            actionName !== 'loginToService') {
+            instance.defaults.headers.common['Authorization'] = GlobalVariables_1.getCookie(userTokenName);
         }
         instance.interceptors.response.use((response) => {
             return response;
@@ -66,7 +65,7 @@ class HttpRequest {
             const { config } = error;
             const originalRequest = config;
             if (error.response.data.action_error.code === 401 &&
-                error.response.data.action_error.message === "Token expired!") {
+                error.response.data.action_error.message === 'Token expired!') {
                 if (!isRefreshing) {
                     isRefreshing = true;
                     this.refreshAccessToken(serviceName).then((newToken) => {
@@ -76,7 +75,7 @@ class HttpRequest {
                 }
                 return new Promise((resolve, reject) => {
                     this.subscribeTokenRefresh((token) => {
-                        originalRequest.headers["Authorization"] = token;
+                        originalRequest.headers['Authorization'] = token;
                         GlobalVariables_1.deleteCookie(serviceName);
                         GlobalVariables_1.setCookie(serviceName, token)
                             .then(() => {
@@ -96,18 +95,18 @@ class HttpRequest {
         return new Promise((resolve, reject) => {
             let data;
             switch (actionName) {
-                case "registerByEmailAndPassword":
-                case "loginByEmailAndPassword":
-                case "loginToService":
-                case "getItems":
-                case "getItem":
-                case "delete":
-                case "getCount":
+                case 'registerByEmailAndPassword':
+                case 'loginByEmailAndPassword':
+                case 'loginToService':
+                case 'getItems':
+                case 'getItem':
+                case 'delete':
+                case 'getCount':
                     data = actionParameters;
                     break;
-                case "createMany":
-                case "deleteMany":
-                case "updateMany":
+                case 'createMany':
+                case 'deleteMany':
+                case 'updateMany':
                     const actionManyParams = { objects: {} };
                     // @ts-ignore
                     actionManyParams.objects = actionParameters;
@@ -123,7 +122,7 @@ class HttpRequest {
                 instance({
                     url: `${domain}/${serviceName}/${modelName}/${actionName}`,
                     method: httpMethod,
-                    data: data,
+                    data: data
                 })
                     .then((response) => {
                     resolve(response);
@@ -133,7 +132,7 @@ class HttpRequest {
                 });
             }
             else {
-                this.actionError = new ActionError_1.ActionError("Укажите URL!");
+                this.actionError = new ActionError_1.ActionError('Укажите URL!');
                 reject(this.actionError.getMessage());
             }
         });

@@ -1,10 +1,10 @@
-import { Method } from "axios";
-import { ActionParameters } from "./Interfaces/ActionParameters";
-import { HttpRequest } from "./NetworkRequests/HttpRequest";
-import { SocketRequest } from "./NetworkRequests/SocketRequest";
-import { ActionMessageInterface } from "./Interfaces/ActionMessageInterface";
-import { EventObserver } from "./NetworkRequests/SocketConnection/Observer";
-import { RoutingKeyParams } from "./Interfaces/RoutingKeyParams";
+import { Method } from 'axios';
+import { ActionParameters } from './Interfaces/ActionParameters';
+import { HttpRequest } from './NetworkRequests/HttpRequest';
+import { SocketRequest } from './NetworkRequests/SocketRequest';
+import { ActionMessageInterface } from './Interfaces/ActionMessageInterface';
+import { EventObserver } from './NetworkRequests/SocketConnection/Observer';
+import { RoutingKeyParams } from './Interfaces/RoutingKeyParams';
 
 const observer: EventObserver = EventObserver.getInstance();
 
@@ -30,7 +30,7 @@ export class ActionMessage implements ActionMessageInterface {
     this.actionName = actionName;
     this.actionParameters = actionParameters;
     this.channelParameters = channelParameters;
-    this.httpMethod = "POST";
+    this.httpMethod = 'POST';
     this.httpRequest = new HttpRequest();
     this.socketRequest = new SocketRequest(
       this.serviceName,
@@ -62,8 +62,8 @@ export class ActionMessage implements ActionMessageInterface {
         })
         .catch((error) => {
           constructorRequest
-            ? reject(error.data.action_error ? error.data.action_error : error)
-            : observer.broadcast(error, "error", this.modelName);
+            ? reject(error.data.action_error)
+            : observer.broadcast(error, 'error', this.modelName);
         });
     });
   }
