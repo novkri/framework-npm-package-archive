@@ -31,7 +31,7 @@ class ActionMessage {
             })
                 .catch((error) => {
                 constructorRequest
-                    ? reject(error.data.action_error)
+                    ? reject(error.data.action_error ? error.data.action_error : error)
                     : observer.broadcast(error, 'error', this.modelName);
             });
         });
