@@ -102,6 +102,8 @@ class HttpRequest {
                 case 'getItem':
                 case 'delete':
                 case 'getCount':
+                case 'updateManyRaw':
+                case 'deleteManyRaw':
                     data = actionParameters;
                     break;
                 case 'createMany':
