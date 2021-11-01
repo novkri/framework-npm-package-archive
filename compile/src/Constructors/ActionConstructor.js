@@ -16,6 +16,7 @@ class ActionConstructor {
         this.microserviceName = '';
         this.modelName = '';
         this.actionName = '';
+        this.calledAction = '';
         this.actionParams = [];
         this.pagination = { per_page: undefined, page: undefined };
         this.id = '';
@@ -31,11 +32,13 @@ class ActionConstructor {
         this.withsArr = [];
         this.pagination = { per_page: undefined, page: undefined };
         this.id = '';
+        this.calledAction = '';
     }
     getMetadata(microserviceName, modelName) {
         this.microserviceName = microserviceName;
         this.modelName = modelName;
         this.actionName = 'getMetadata';
+        this.calledAction = 'getMetadata';
         return this;
     }
     getItems(microserviceName, modelName) {
@@ -43,6 +46,7 @@ class ActionConstructor {
         this.microserviceName = microserviceName;
         this.modelName = modelName;
         this.actionName = 'getItems';
+        this.calledAction = 'getItems';
         return this;
     }
     getItem(microserviceName, modelName, id) {
@@ -50,6 +54,7 @@ class ActionConstructor {
         this.microserviceName = microserviceName;
         this.modelName = modelName;
         this.actionName = 'getItem';
+        this.calledAction = 'getItem';
         this.id = id;
         return this;
     }
@@ -58,6 +63,7 @@ class ActionConstructor {
         this.modelName = modelName;
         this.actionParams = actionParams;
         this.actionName = 'create';
+        this.calledAction = 'create';
         return this;
     }
     update(microserviceName, modelName, actionParams) {
@@ -65,6 +71,7 @@ class ActionConstructor {
         this.modelName = modelName;
         this.actionParams = actionParams;
         this.actionName = 'update';
+        this.calledAction = 'update';
         return this;
     }
     delete(microserviceName, modelName, actionParams) {
@@ -72,6 +79,7 @@ class ActionConstructor {
         this.modelName = modelName;
         this.actionParams = actionParams;
         this.actionName = 'delete';
+        this.calledAction = 'delete';
         return this;
     }
     createMany(microserviceName, modelName, actionParams) {
@@ -79,6 +87,7 @@ class ActionConstructor {
         this.modelName = modelName;
         this.actionParams = actionParams;
         this.actionName = 'createMany';
+        this.calledAction = 'createMany';
         return this;
     }
     updateMany(microserviceName, modelName, actionParams) {
@@ -86,6 +95,7 @@ class ActionConstructor {
         this.modelName = modelName;
         this.actionParams = actionParams;
         this.actionName = 'updateMany';
+        this.calledAction = 'updateMany';
         return this;
     }
     updateManyWithFilter(microserviceName, modelName, actionParams) {
@@ -93,6 +103,7 @@ class ActionConstructor {
         this.modelName = modelName;
         this.actionParams = actionParams;
         this.actionName = 'updateManyRaw';
+        this.calledAction = 'updateManyRaw';
         return this;
     }
     deleteManyWithFilter(microserviceName, modelName, actionParams) {
@@ -100,6 +111,7 @@ class ActionConstructor {
         this.modelName = modelName;
         this.actionParams = actionParams;
         this.actionName = 'deleteManyRaw';
+        this.calledAction = 'deleteManyRaw';
         return this;
     }
     custom(microserviceName, modelName, actionName, actionParams) {
@@ -108,6 +120,7 @@ class ActionConstructor {
         this.modelName = modelName;
         this.actionParams = actionParams;
         this.actionName = actionName;
+        this.calledAction = 'custom';
         return this;
     }
     getCount(microserviceName, modelName) {
@@ -115,6 +128,7 @@ class ActionConstructor {
         this.microserviceName = microserviceName;
         this.modelName = modelName;
         this.actionName = 'getCount';
+        this.calledAction = 'getCount';
         return this;
     }
     filter(filterObject) {
@@ -146,7 +160,7 @@ class ActionConstructor {
                 id: this.id
             };
             GlobalVariables_1.GlobalVariables.tokenUST = this.microserviceName;
-            switch (this.actionName) {
+            switch (this.calledAction) {
                 case 'getItems':
                 case 'getItem':
                 case 'getCount':
