@@ -131,10 +131,15 @@ class ActionConstructor {
         this.calledAction = 'getCount';
         return this;
     }
-    filter(filterObject) {
-        const newFilterObj = new GetItemsFilterParams_1.GetItemsFilterParams(filterObject);
-        newFilterObj.checkFilterType();
-        this.filterArr = newFilterObj.formFilterObject();
+    filter(filterObject, custom) {
+        if (custom && custom === 'custom') {
+            this.filterArr = filterObject;
+        }
+        else {
+            const newFilterObj = new GetItemsFilterParams_1.GetItemsFilterParams(filterObject);
+            newFilterObj.checkFilterType();
+            this.filterArr = newFilterObj.formFilterObject();
+        }
         return this;
     }
     withs(withs) {

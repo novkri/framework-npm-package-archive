@@ -146,10 +146,14 @@ export class ActionConstructor implements ActionConstructorInterface {
     this.calledAction = 'getCount';
     return this;
   }
-  filter(filterObject: (string | object)[]): this {
-    const newFilterObj = new GetItemsFilterParams(filterObject);
-    newFilterObj.checkFilterType();
-    this.filterArr = newFilterObj.formFilterObject();
+  filter(filterObject: (string | object)[], custom?: string | undefined): this {
+    if (custom && custom === 'custom') {
+      this.filterArr = filterObject;
+    } else {
+      const newFilterObj = new GetItemsFilterParams(filterObject);
+      newFilterObj.checkFilterType();
+      this.filterArr = newFilterObj.formFilterObject();
+    }
     return this;
   }
   withs(withs: Array<string>): this {

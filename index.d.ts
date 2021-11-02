@@ -415,7 +415,7 @@ interface ActionConstructorInterface {
         actionParams: object
     ): this;
     getCount(microserviceName: string, modelName: string): this;
-    filter(filterObject: object): this;
+    filter(filterObject: object, custom?:string|undefined): this;
     withs(withs: Array<string>): this;
     order(orders: string[][] | undefined): this;
     setPagination(perPage: number, page: number): this;
