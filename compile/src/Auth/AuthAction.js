@@ -57,7 +57,8 @@ class AuthAction {
         return new Promise((resolve, reject) => {
             this.setNetworkRequest(createdUserData, auth)
                 .then((data) => {
-                sessionStorage.setItem('umt', data[0]);
+                localStorage.setItem('umt', data[0].user_master_token);
+                localStorage.setItem('umrt', data[0].user_master_refresh_token);
                 resolve(data);
             })
                 .catch((error) => {

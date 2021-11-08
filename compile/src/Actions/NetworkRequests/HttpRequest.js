@@ -9,6 +9,7 @@ const ActionError_1 = require("../ActionResponses/ActionError");
 const GlobalVariables_1 = require("../../GlobalVariables");
 let isRefreshing = false;
 let refreshSubscribers = [];
+let initialRequest = undefined;
 class HttpRequest {
     constructor() {
         this.actionResult = {};
@@ -21,8 +22,33 @@ class HttpRequest {
         refreshSubscribers.map((cb) => cb(token));
     }
     refreshAccessToken(serviceName) {
+        axios_1.default.interceptors.response.use((response) => {
+            return response;
+        }, (error) => {
+            const { config } = error;
+            if (error.response.data.action_error.message === 'Token umt expired!') {
+                this.refreshMasterToken().then(() => {
+                    return new Promise((resolve, reject) => {
+                        this.refreshAccessToken(serviceName).then((result) => {
+                            initialRequest.headers['Authorization'] = result;
+                            GlobalVariables_1.deleteCookie(serviceName);
+                            GlobalVariables_1.setCookie(serviceName, result)
+                                .then(() => {
+                                resolve(axios_1.default(initialRequest));
+                            })
+                                .catch((error) => {
+                                reject(error);
+                            });
+                        });
+                    });
+                });
+            }
+            else {
+                return Promise.reject(error);
+            }
+        });
         return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('umt')) {
+            if (localStorage.getItem('umt')) {
                 let domain = GlobalVariables_1.GlobalVariables.httpBaseUrl
                     ? GlobalVariables_1.GlobalVariables.httpBaseUrl
                     : GlobalVariables_1.GlobalVariables.authBaseUrl;
@@ -33,10 +59,36 @@ class HttpRequest {
                     method: 'POST',
                     data: {
                         service_name: serviceName,
-                        token: sessionStorage.getItem('umt')
+                        token: localStorage.getItem('umt')
                     }
                 })
                     .then((response) => {
+                    resolve(response.data.action_result.data);
+                })
+                    .catch((error) => {
+                    reject(error);
+                });
+            }
+            else {
+                reject(new ActionError_1.ActionError('Session expired!', 401).getMessage());
+            }
+        });
+    }
+    refreshMasterToken() {
+        return new Promise((resolve, reject) => {
+            if (localStorage.getItem('umrt')) {
+                let domain = GlobalVariables_1.GlobalVariables.httpBaseUrl;
+                delete axios_1.default.defaults.headers.Authorization;
+                axios_1.default({
+                    url: `${domain}/auth/User/refreshUserMasterToken`,
+                    method: 'POST',
+                    data: {
+                        token: localStorage.getItem('umrt')
+                    }
+                })
+                    .then((response) => {
+                    localStorage.setItem('umrt', response.data.action_result.data.user_master_refresh_token);
+                    localStorage.setItem('umt', response.data.action_result.data.user_master_token);
                     resolve(response.data.action_result.data);
                 })
                     .catch((error) => {
@@ -56,7 +108,8 @@ class HttpRequest {
         let instance = axios_1.default.create();
         if (actionName !== 'registerByEmailAndPassword' &&
             actionName !== 'loginByEmailAndPassword' &&
-            actionName !== 'loginToService') {
+            actionName !== 'loginToService' &&
+            actionName !== 'loginAndGetRefreshToken') {
             instance.defaults.headers.common['Authorization'] = GlobalVariables_1.getCookie(userTokenName);
         }
         instance.interceptors.response.use((response) => {
@@ -64,8 +117,9 @@ class HttpRequest {
         }, (error) => {
             const { config } = error;
             const originalRequest = config;
+            initialRequest = originalRequest;
             if (error.response.data.action_error.code === 401 &&
-                error.response.data.action_error.message === 'Token expired!') {
+                error.response.data.action_error.message === 'Token ust expired!') {
                 if (!isRefreshing) {
                     isRefreshing = true;
                     this.refreshAccessToken(serviceName).then((newToken) => {
@@ -79,8 +133,8 @@ class HttpRequest {
                         GlobalVariables_1.deleteCookie(serviceName);
                         GlobalVariables_1.setCookie(serviceName, token)
                             .then(() => {
-                            refreshSubscribers = [];
                             resolve(instance(originalRequest));
+                            refreshSubscribers = [];
                         })
                             .catch((error) => {
                             reject(error);
@@ -98,6 +152,7 @@ class HttpRequest {
                 case 'registerByEmailAndPassword':
                 case 'loginByEmailAndPassword':
                 case 'loginToService':
+                case 'loginAndGetRefreshToken':
                 case 'getItems':
                 case 'getItem':
                 case 'delete':

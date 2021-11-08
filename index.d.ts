@@ -250,7 +250,7 @@ declare class ActionConstructor {
         actionParams: object
     ): this
     getCount(microserviceName: string, modelName: string): this
-    filter(filterObject: (string | object)[], custom?:string|undefined): this
+    filter(filterObject: (string | object)[], custom?: string|undefined): this
     withs(withs: Array<string>): this
     order(orders: string[][] | undefined): this
     setPagination(perPage: number, page: number): this
@@ -294,11 +294,7 @@ declare class ValidationConstructor {
     validation: any;
     customMessages: any | undefined;
     validate():Promise<any>
-    createValidationRule(ruleObject: {
-        name: string;
-        callback: (value: string | number | Boolean) => RegExpMatchArray | null;
-        message: string;
-    }):any
+    createValidationRule(ruleObject: { name: string; callback: any; message?: string }): any;
     overrideDefaultMessage(rule: string, message: string, lang?: string):any
     getAllErrorMessages(languageCode: string):any
     getAllAvailableRules():any
@@ -415,7 +411,7 @@ interface ActionConstructorInterface {
         actionParams: object
     ): this;
     getCount(microserviceName: string, modelName: string): this;
-    filter(filterObject: object, custom?:string|undefined): this;
+    filter(filterObject: (string|object)[], custom?:string|undefined): this;
     withs(withs: Array<string>): this;
     order(orders: string[][] | undefined): this;
     setPagination(perPage: number, page: number): this;
