@@ -11,6 +11,8 @@ export interface ActionConstructorInterface {
 
   delete(microserviceName: string, modelName: string, actionParams: object): this;
 
+  deleteMany(microserviceName: string, modelName: string, actionParams: object): this;
+
   createMany(microserviceName: string, modelName: string, actionParams: object): this;
 
   updateMany(microserviceName: string, modelName: string, actionParams: object): this;

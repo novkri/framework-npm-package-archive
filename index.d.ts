@@ -400,6 +400,7 @@ interface ActionConstructorInterface {
     create(microserviceName: string, modelName: string, actionParams: object): this;
     update(microserviceName: string, modelName: string, actionParams: object): this;
     delete(microserviceName: string, modelName: string, actionParams: object): this;
+    deleteMany(microserviceName: string, modelName: string, actionParams: object): this;
     createMany(microserviceName: string, modelName: string, actionParams: object): this;
     updateMany(microserviceName: string, modelName: string, actionParams: object): this;
     updateManyWithFilter(microserviceName: string, modelName: string, actionParams: object): this;
