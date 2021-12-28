@@ -181,10 +181,10 @@ export class HttpRequest {
         case 'getCount':
         case 'updateManyRaw':
         case 'deleteManyRaw':
+        case 'deleteMany':
           data = actionParameters;
           break;
         case 'createMany':
-        case 'deleteMany':
         case 'updateMany':
           const actionManyParams = { objects: {} };
           // @ts-ignore

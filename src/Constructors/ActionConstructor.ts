@@ -92,6 +92,14 @@ export class ActionConstructor implements ActionConstructorInterface {
     this.calledAction = 'delete';
     return this;
   }
+  deleteMany(microserviceName: string, modelName: string, actionParams: object): this {
+    this.microserviceName = microserviceName;
+    this.modelName = modelName;
+    this.actionParams = actionParams;
+    this.actionName = 'deleteMany';
+    this.calledAction = 'deleteMany';
+    return this;
+  }
   createMany(microserviceName: string, modelName: string, actionParams: object): this {
     this.microserviceName = microserviceName;
     this.modelName = modelName;
