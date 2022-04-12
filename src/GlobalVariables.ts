@@ -62,3 +62,35 @@ export const deleteAllCookies = function (): any {
 export const deleteCookie = function (name: string): any {
   document.cookie = name + '=; expires=Thu, 01-Jan-70 00:00:01 GMT;';
 };
+
+export const setUmrt = function(token: string) {
+  try {
+    return localStorage.setItem('umrt', token);
+  } catch (error) {
+    return error;
+  }
+}
+
+export const deleteUmrt = function() {
+  try {
+    return localStorage.removeItem('umrt');
+  } catch (error) {
+    return error;
+  }
+}
+
+export const setUmt = function(token: string) {
+  try {
+    return localStorage.setItem('umt', token);
+  } catch (error) {
+    return error;
+  }
+}
+
+export const deleteUmt = function() {
+  try {
+    return localStorage.removeItem('umt');
+  } catch (error) {
+    return error;
+  }
+}

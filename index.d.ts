@@ -5,7 +5,6 @@ declare class ActionError {
 
     code: number | undefined;
     message: string;
-
     getMessage(): string;
 }
 
@@ -241,6 +240,7 @@ declare class ActionConstructor {
     delete(microserviceName: string, modelName: string, actionParams: object): this
     createMany(microserviceName: string, modelName: string, actionParams: object): this
     updateMany(microserviceName: string, modelName: string, actionParams: object): this
+    deleteMany(microserviceName: string, modelName: string, actionParams: object): this
     updateManyWithFilter(microserviceName: string, modelName: string, actionParams: object): this
     deleteManyWithFilter(microserviceName: string, modelName: string, actionParams: object): this
     custom(
@@ -294,7 +294,11 @@ declare class ValidationConstructor {
     validation: any;
     customMessages: any | undefined;
     validate():Promise<any>
-    createValidationRule(ruleObject: { name: string; callback: any; message?: string }): any;
+    createValidationRule(ruleObject: {
+        name: string;
+        callback: (value: string | number | Boolean) => RegExpMatchArray | null;
+        message: string;
+    }):any
     overrideDefaultMessage(rule: string, message: string, lang?: string):any
     getAllErrorMessages(languageCode: string):any
     getAllAvailableRules():any
@@ -412,7 +416,7 @@ interface ActionConstructorInterface {
         actionParams: object
     ): this;
     getCount(microserviceName: string, modelName: string): this;
-    filter(filterObject: (string|object)[], custom?:string|undefined): this;
+    filter(filterObject: object, custom?:string): this;
     withs(withs: Array<string>): this;
     order(orders: string[][] | undefined): this;
     setPagination(perPage: number, page: number): this;
@@ -559,6 +563,10 @@ declare const setCookie:any;
 declare const getCookie:any;
 declare const deleteAllCookies:any;
 declare const deleteCookie:any;
+declare const setUmrt: any;
+declare const deleteUmrt: any;
+declare const setUmt: any;
+declare const deleteUmt: any;
 declare let isRefreshing:boolean;
 declare let refreshSubscribers: any[];
 declare let register:string;

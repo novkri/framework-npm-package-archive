@@ -1,7 +1,7 @@
 import { Method } from 'axios';
 import { HttpRequest } from '../Actions/NetworkRequests/HttpRequest';
 import { AuthParams } from './AuthParams';
-import { GlobalVariables } from '../GlobalVariables';
+import {GlobalVariables, setCookie} from '../GlobalVariables';
 import { ActionParameters } from '../Actions/Interfaces/ActionParameters';
 
 let register = 'register';
