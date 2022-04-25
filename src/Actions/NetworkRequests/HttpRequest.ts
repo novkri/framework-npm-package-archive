@@ -200,7 +200,12 @@ export class HttpRequest {
                         resolve(response);
                     })
                     .catch((error) => {
-                        reject(error.response);
+                        if('response' in error) {
+                            reject(error.response);
+                        } else {
+                            reject(error)
+                        }
+
                     });
             } else {
                 this.actionError = new ActionError('Укажите URL!');

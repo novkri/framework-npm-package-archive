@@ -52,9 +52,16 @@ export class ActionMessage implements ActionMessageInterface {
             : observer.broadcast(items, action, modelName, actionMessage);
         })
         .catch((error) => {
-          console.log(error, 'action message')
+          let returnError
+          if('data' in error) {
+            if('action_error' in error.data) {
+              returnError = error.data.action_error
+            }
+          } else {
+            returnError = error
+          }
           constructorRequest
-            ? reject(error?.data?.action_error ? error.data.action_error : error)
+            ? reject(returnError)
             : observer.broadcast(error, 'error', this.modelName);
         });
     });
