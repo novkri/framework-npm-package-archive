@@ -4,29 +4,29 @@ export interface ModelInterface {
   actionGetMetadata(microserviceName: string, actionName: string, connectionType: string): any;
 
   actionGetItem(
-    microserviceName: string,
-    connectionType: string,
-    id: string,
-    filter?: (string | object)[] | undefined,
-    orders?: object[]
+      microserviceName: string,
+      connectionType: string,
+      id: string,
+      filter?: (string | object)[] | undefined,
+      orders?: object[]
   ): any;
 
   actionGetItems(
-    microserviceName: string,
-    connectionType: string,
-    perPage?: number,
-    page?: number,
-    filter?: (string | object)[] | undefined,
-    withs?: string | string[] | undefined,
-    orders?: object[],
-    actionName?: string
+      microserviceName: string,
+      connectionType: string,
+      perPage?: number,
+      page?: number,
+      filter?: (string | object)[] | undefined,
+      withs?: string | string[] | undefined,
+      orders?: object[],
+      actionName?: string
   ): any;
 
   actionCreate(
-    microserviceName: string,
-    connectionType: string,
-    actionParams?: any,
-    channelParameters?: RoutingKeyParams | undefined
+      microserviceName: string,
+      connectionType: string,
+      actionParams?: any,
+      channelParameters?: RoutingKeyParams | undefined
   ): any;
 
   actionUpdate(microserviceName: string, connectionType: string, actionParams?: any): any;
@@ -34,10 +34,10 @@ export interface ModelInterface {
   actionDelete(microserviceName: string, connectionType: string, actionParams?: any): any;
 
   actionCreateMany(
-    microserviceName: string,
-    connectionType: string,
-    actionParams?: any,
-    channelParameters?: RoutingKeyParams | undefined
+      microserviceName: string,
+      connectionType: string,
+      actionParams?: any,
+      channelParameters?: RoutingKeyParams | undefined
   ): any;
 
   actionUpdateMany(microserviceName: string, connectionType: string, actionParams?: any): any;
@@ -45,10 +45,11 @@ export interface ModelInterface {
   actionDeleteMany(microserviceName: string, connectionType: string, actionParams?: any): any;
 
   actionCustom(
-    microserviceName: string,
-    actionName: string,
-    connectionType: string,
-    actionParams?: object
+      microserviceName: string,
+      actionName: string,
+      connectionType: string,
+      actionParams?: object,
+      additionalParams?: any
   ): any;
 
   getModelMetadata(): any;
@@ -64,15 +65,15 @@ export interface ModelInterface {
   getModelFieldsWithTypes(): any;
 
   actionUpdateManyWithFilter(
-    microserviceName: string,
-    connectionType: string,
-    actionParams: object
+      microserviceName: string,
+      connectionType: string,
+      actionParams: object
   ): any;
 
   actionDeleteManyWithFilter(
-    microserviceName: string,
-    connectionType: string,
-    actionParams: object
+      microserviceName: string,
+      connectionType: string,
+      actionParams: object
   ): any;
 
   // getSpecificFields(

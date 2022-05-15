@@ -29,23 +29,23 @@ export class EgalConstructor extends Model {
   }
 
   initModel(): any {
-    this.egalModel.setBaseUrl(this.url, this.connectionType);
+    this.egalModel.setBaseUrl(this.url);
     return this.egalModel;
   }
   initModelObserver(): Promise<any> {
     return new Promise((resolve, reject) => {
       this.egalObserver.subscribe(
-        this.modelName,
-        (data: any, actionName: string, modelName: string, actionMessage: object) => {
-          let receivedData;
-          if (actionName !== 'error') {
-            receivedData = [data[0], actionName, modelName, actionMessage];
-            resolve(receivedData);
-          } else {
-            receivedData = [data[0], actionName, modelName, actionMessage];
-            reject(receivedData);
+          this.modelName,
+          (data: any, actionName: string, modelName: string, actionMessage: object) => {
+            let receivedData;
+            if (actionName !== 'error') {
+              receivedData = [data[0], actionName, modelName, actionMessage];
+              resolve(receivedData);
+            } else {
+              receivedData = [data[0], actionName, modelName, actionMessage];
+              reject(receivedData);
+            }
           }
-        }
       );
     });
   }

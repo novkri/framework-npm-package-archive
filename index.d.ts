@@ -42,9 +42,10 @@ declare class CRUDActionParams {
 }
 
 declare class CustomAction {
-    constructor(microserviceName: string, modelName: string, actionName: string, actionParams?: any)
+    constructor(microserviceName: string, modelName: string, actionName: string, actionParams?: any, additionalParams?:any)
 
     actionParameters: any;
+    additionalParameters: any;
     microserviceName: string;
     modelName: string;
     actionName: string;
@@ -168,6 +169,7 @@ declare class HttpRequest {
         actionName: string,
         httpMethod: Method,
         actionParameters: ActionParameters | undefined,
+        customActionParameters?: any,
         tokenName?: string
     ):Promise<any>
 }
@@ -178,14 +180,14 @@ declare class ActionMessage {
         actionName: string,
         modelName: string,
         actionParameters?: ActionParameters,
-        channelParameters?: any
+        customActionParameters?: any
     )
     serviceName: string;
     modelName: string;
     actionName: string;
     httpMethod: Method;
     httpRequest: HttpRequest;
-    channelParameters: RoutingKeyParams;
+    customActionParameters: any;
     actionParameters?: ActionParameters;
     axiosConnect(constructorRequest?: boolean):Promise<any>
 }
@@ -372,7 +374,8 @@ declare class Model {
         microserviceName: string,
         actionName: string,
         connectionType: string,
-        actionParams?: object
+        actionParams?: object,
+        additionalParams?:any
     ):any
     getModelMetadata():any
     getModelActionList():any
@@ -527,7 +530,8 @@ interface ModelInterface {
         microserviceName: string,
         actionName: string,
         connectionType: string,
-        actionParams?: object
+        actionParams?: object,
+        additionalParams?: any
     ): any;
 
     getModelMetadata(): any;
