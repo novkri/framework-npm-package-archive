@@ -193,7 +193,7 @@ declare class ActionMessage {
 }
 
 declare class AuthAction {
-    constructor(modelName: string, requestType: string)
+    constructor(modelName: string, requestType: string, microserviceName?:string)
     private microserviceName: string;
     private modelName: string;
     private httpMethod: Method;
@@ -260,7 +260,7 @@ declare class ActionConstructor {
 }
 
 declare class EgalAuthConstructor {
-    constructor(authParams: { modelName: string; url: string; connectionType: string })
+    constructor(authParams: { modelName: string; url: string; connectionType: string, microserviceName?:string })
     egalAuth: AuthAction;
     url: string;
     initAuthAction():any
