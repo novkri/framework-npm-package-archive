@@ -15,8 +15,8 @@ export class AuthAction {
   private requestAction: string;
   private requestType: string;
 
-  constructor(modelName: string, requestType: string) {
-    this.microserviceName = 'auth';
+  constructor(modelName: string, requestType: string, microserviceName?: string) {
+    this.microserviceName = microserviceName ? microserviceName : 'auth';
     this.modelName = modelName;
     this.httpMethod = 'POST';
     this.requestAction = '';
