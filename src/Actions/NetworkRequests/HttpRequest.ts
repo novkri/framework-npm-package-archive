@@ -33,7 +33,7 @@ export class HttpRequest {
             async (error) => {
                 const {config} = error;
                 if (error.response.data.action_error.internal_code === 'umt_expired') {
-                    this.refreshMasterToken().then(() => {
+                    this.refreshMasterToken(serviceName).then(() => {
                         this.refreshAccessToken(serviceName).then(() => {
                             initialRequest.headers['Authorization'] = getCookie(serviceName);
                             axios(initialRequest);
@@ -52,9 +52,9 @@ export class HttpRequest {
                 ? GlobalVariables.httpBaseUrl
                 : GlobalVariables.authBaseUrl;
             delete axios.defaults.headers.Authorization;
-            deleteCookie(serviceName);
+
             await axios({
-                url: `${domain}/auth/User/loginToService`,
+                url: `${domain}/${serviceName}/User/loginToService`,
                 method: 'POST',
                 data: {
                     service_name: serviceName,
@@ -73,14 +73,14 @@ export class HttpRequest {
         }
     }
 
-    async refreshMasterToken() {
+    async refreshMasterToken(serviceName:string) {
         if (localStorage.getItem('umrt')) {
             let domain = GlobalVariables.httpBaseUrl
                 ? GlobalVariables.httpBaseUrl
                 : GlobalVariables.authBaseUrl;
             delete axios.defaults.headers.Authorization;
             await axios({
-                url: `${domain}/auth/User/refreshUserMasterToken`,
+                url: `${domain}/${serviceName}/User/refreshUserMasterToken`,
                 method: 'POST',
                 data: {
                     token: localStorage.getItem('umrt')
