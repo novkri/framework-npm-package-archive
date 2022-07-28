@@ -32,7 +32,7 @@ export class ActionMessage implements ActionMessageInterface {
         this.httpRequest = new HttpRequest();
     }
 
-    axiosConnect(constructorRequest?: boolean): Promise<any> {
+    axiosConnect(constructorRequest?: boolean, refreshTokenName?: string): Promise<any> {
         return new Promise((resolve, reject) => {
             this.httpRequest
                 .axiosConnect(
@@ -41,7 +41,8 @@ export class ActionMessage implements ActionMessageInterface {
                     this.actionName,
                     this.httpMethod,
                     this.actionParameters,
-                    this.customActionParameters
+                    this.customActionParameters,
+                    refreshTokenName
                 )
                 .then((response: any) => {
                     let action = response.data.action.action_name;

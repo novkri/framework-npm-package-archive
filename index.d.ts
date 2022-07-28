@@ -162,7 +162,7 @@ declare class HttpRequest {
     actionError: ActionError;
     subscribeTokenRefresh(cb: any): void
     onRefreshed(token: any): void
-    refreshAccessToken(serviceName: string): Promise<any>
+    refreshAccessToken(serviceName: string|undefined, requestServiceName?: string|undefined): Promise<any>
     axiosConnect(
         serviceName: string,
         modelName: string,
@@ -170,8 +170,9 @@ declare class HttpRequest {
         httpMethod: Method,
         actionParameters: ActionParameters | undefined,
         customActionParameters?: any,
-        tokenName?: string
+        refreshTokenName?: string
     ):Promise<any>
+    setTargetMicroserviceName(token:string):string
 }
 
 declare class ActionMessage {
@@ -189,7 +190,7 @@ declare class ActionMessage {
     httpRequest: HttpRequest;
     customActionParameters: any;
     actionParameters?: ActionParameters;
-    axiosConnect(constructorRequest?: boolean):Promise<any>
+    axiosConnect(constructorRequest?: boolean, refreshTokenName?:string):Promise<any>
 }
 
 declare class AuthAction {
@@ -221,7 +222,7 @@ declare class AuthParams {
 }
 
 declare class ActionConstructor {
-    constructor(url: string)
+    constructor(url: string, refreshTokenName: string)
     filterArr: (string | object)[];
     ordersArr: Array<object>;
     withsArr: Array<string>;

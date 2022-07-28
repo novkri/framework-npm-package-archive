@@ -19,8 +19,9 @@ export class ActionConstructor implements ActionConstructorInterface {
     pagination: { per_page: number | undefined; page: number | undefined };
     id: string | number;
     url: string;
+    refreshTokenName: string;
 
-    constructor(url: string) {
+    constructor(url: string, refreshTokenName: string) {
         this.filterArr = [];
         this.ordersArr = [];
         this.withsArr = [];
@@ -32,6 +33,7 @@ export class ActionConstructor implements ActionConstructorInterface {
         this.pagination = {per_page: undefined, page: undefined};
         this.id = '';
         this.url = url;
+        this.refreshTokenName = refreshTokenName;
         this.setBaseUrl(this.url);
     }
 
@@ -218,7 +220,7 @@ export class ActionConstructor implements ActionConstructorInterface {
                         this.actionName,
                         actionParameters
                     )
-                        .axiosConnect(true)
+                        .axiosConnect(true, this.refreshTokenName)
                         .then((data) => {
                             resolve(data);
                         })
@@ -232,7 +234,7 @@ export class ActionConstructor implements ActionConstructorInterface {
                         this.actionName,
                         this.modelName
                     )
-                        .axiosConnect(true)
+                        .axiosConnect(true, this.refreshTokenName)
                         .then((data) => {
                             resolve(data);
                         })
@@ -248,7 +250,7 @@ export class ActionConstructor implements ActionConstructorInterface {
                         this.actionParams,
                         actionParameters
                     )
-                        .axiosConnect(true)
+                        .axiosConnect(true, this.refreshTokenName)
                         .then((data) => {
                             resolve(data);
                         })
@@ -263,7 +265,7 @@ export class ActionConstructor implements ActionConstructorInterface {
                         this.actionName,
                         this.actionParams
                     )
-                        .axiosConnect(true)
+                        .axiosConnect(true, this.refreshTokenName)
                         .then((data) => {
                             resolve(data);
                         })

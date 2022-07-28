@@ -2,12 +2,13 @@ import axios, {Method} from 'axios';
 import {ActionResult} from '../ActionResponses/ActionResult';
 import {ActionError} from '../ActionResponses/ActionError';
 import {ActionParameters} from '../Interfaces/ActionParameters';
-import {getCookie, GlobalVariables, deleteCookie, setCookie} from '../../GlobalVariables';
+import {getCookie, GlobalVariables, deleteCookie, setCookie, decipherJWT} from '../../GlobalVariables';
 
 let isRefreshing = false;
 let refreshSubscribers: any[] = [];
 let initialRequest: any = undefined;
-
+let targetServiceName: string = ''
+let newToken: string = ''
 export class HttpRequest {
     actionResult: ActionResult;
     actionError: ActionError;
@@ -25,7 +26,7 @@ export class HttpRequest {
         refreshSubscribers.map((cb) => cb(token));
     }
 
-    async refreshAccessToken(serviceName: string) {
+    async refreshAccessToken(serviceName: string|undefined, requestServiceName?: string) {
         axios.interceptors.response.use(
             (response) => {
                 return response;
@@ -34,8 +35,9 @@ export class HttpRequest {
                 const {config} = error;
                 if (error.response.data.action_error.internal_code === 'umt_expired') {
                     this.refreshMasterToken(serviceName).then(() => {
-                        this.refreshAccessToken(serviceName).then(() => {
-                            initialRequest.headers['Authorization'] = getCookie(serviceName);
+                        this.refreshAccessToken(serviceName, requestServiceName).then(() => {
+                            // @ts-ignore
+                            initialRequest.headers['Authorization'] = getCookie(requestServiceName);
                             axios(initialRequest);
                             refreshSubscribers = [];
                         })
@@ -57,14 +59,16 @@ export class HttpRequest {
                 url: `${domain}/${serviceName}/User/loginToService`,
                 method: 'POST',
                 data: {
-                    service_name: serviceName,
+                    service_name: requestServiceName,
                     token: localStorage.getItem('umt')
                 }
             })
                 .then((response) => {
-                    deleteCookie(serviceName);
-                    setCookie(serviceName, response.data.action_result.data)
+                    // @ts-ignore
+                    deleteCookie(requestServiceName);
+                    this.setTargetMicroserviceName(response.data.action_result.data)
                     this.onRefreshed(response.data.action_result.data)
+                    newToken = response.data.action_result.data
                     return response.data.action_result.data;
                 })
                 .catch((error) => {
@@ -73,7 +77,7 @@ export class HttpRequest {
         }
     }
 
-    async refreshMasterToken(serviceName:string) {
+    async refreshMasterToken(serviceName:string|undefined) {
         if (localStorage.getItem('umrt')) {
             let domain = GlobalVariables.httpBaseUrl
                 ? GlobalVariables.httpBaseUrl
@@ -109,12 +113,12 @@ export class HttpRequest {
         httpMethod: Method,
         actionParameters: ActionParameters | undefined,
         customActionParameters?: any,
-        tokenName?: string
+        refreshTokenName?: string
     ): Promise<any> {
         let domain = GlobalVariables.httpBaseUrl
             ? GlobalVariables.httpBaseUrl
             : GlobalVariables.authBaseUrl;
-        let userTokenName = tokenName ? tokenName : GlobalVariables.tokenUST;
+        let userTokenName = GlobalVariables.tokenUST;
         let instance = axios.create();
         if (
             actionName !== 'register' &&
@@ -132,28 +136,22 @@ export class HttpRequest {
                 const {config} = error;
                 const originalRequest = config;
                 initialRequest = originalRequest;
+                const requestServiceName = this.setTargetMicroserviceName(initialRequest.headers.Authorization)
                 if (
                     error.response.data.action_error.code === 401 &&
                     error.response.data.action_error.internal_code === 'ust_expired'
                 ) {
                     if (!isRefreshing) {
                         isRefreshing = true;
-                        this.refreshAccessToken(serviceName).then(() => {
+                        this.refreshAccessToken(refreshTokenName, requestServiceName).then(() => {
                             isRefreshing = false;
                         })
                     }
                     return new Promise((resolve, reject) => {
-                        this.subscribeTokenRefresh((token: any) => {
-                            originalRequest.headers['Authorization'] = token;
-                            deleteCookie(serviceName);
-                            setCookie(serviceName, token)
-                                .then(() => {
+                        this.subscribeTokenRefresh((newToken: any) => {
+                            originalRequest.headers['Authorization'] = getCookie(requestServiceName);
                                     resolve(instance(originalRequest));
                                     refreshSubscribers = [];
-                                })
-                                .catch((error) => {
-                                    reject(error);
-                                });
                         });
                     });
                 } else {
@@ -209,5 +207,12 @@ export class HttpRequest {
                 reject(this.actionError.getMessage());
             }
         });
+    }
+
+    setTargetMicroserviceName(token:string) {
+        let decipheredToken = decipherJWT(token)
+        targetServiceName = decipheredToken.target_service_name
+        setCookie(targetServiceName, token)
+        return targetServiceName
     }
 }
