@@ -141,6 +141,7 @@ export class HttpRequest {
                     error.response.data.action_error.code === 401 &&
                     error.response.data.action_error.internal_code === 'ust_expired'
                 ) {
+                    const requestServiceName = this.setTargetMicroserviceName(initialRequest.headers.Authorization)
                     if (!isRefreshing) {
                         isRefreshing = true;
                         this.refreshAccessToken(refreshTokenName, requestServiceName).then(() => {
