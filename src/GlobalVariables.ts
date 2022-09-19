@@ -29,9 +29,9 @@ export const setCookie = async function (
     } else if (flags.samesite && flags.secure) {
       addedFlags = `; samesite=${flags.samesite};${flags.secure};`;
     }
-    document.cookie = name + '=' + token + addedFlags;
+    document.cookie = name + '=' + token + addedFlags + 'path=/;';
   } else {
-    document.cookie = name + '=' + token;
+    document.cookie = name + '=' + token + '; path=/;';
   }
 };
 
@@ -62,7 +62,7 @@ export const deleteAllCookies = function (): any {
 };
 
 export const deleteCookie = function (name: string): any {
-  document.cookie = name + '=; expires=Thu, 01-Jan-70 00:00:01 GMT;';
+  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
 };
 
 export const setUmrt = function(token: string) {
