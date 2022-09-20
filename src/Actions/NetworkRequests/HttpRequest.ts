@@ -136,7 +136,6 @@ export class HttpRequest {
                 const {config} = error;
                 const originalRequest = config;
                 initialRequest = originalRequest;
-                const requestServiceName = this.setTargetMicroserviceName(initialRequest.headers.Authorization)
                 if (
                     error.response.data.action_error.code === 401 &&
                     error.response.data.action_error.internal_code === 'ust_expired'
