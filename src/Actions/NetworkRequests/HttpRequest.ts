@@ -1,8 +1,9 @@
-import axios, {Method} from 'axios';
+import {Method} from 'axios';
 import {ActionResult} from '../ActionResponses/ActionResult';
 import {ActionError} from '../ActionResponses/ActionError';
 import {ActionParameters} from '../Interfaces/ActionParameters';
 import {getCookie, GlobalVariables, deleteCookie, setCookie, decipherJWT} from '../../GlobalVariables';
+import globalAxios from "../../AxiosInstance";
 
 let isRefreshing = false;
 let refreshSubscribers: any[] = [];
@@ -27,7 +28,7 @@ export class HttpRequest {
     }
 
     async refreshAccessToken(serviceName: string|undefined, requestServiceName?: string) {
-        axios.interceptors.response.use(
+        globalAxios.interceptors.response.use(
             (response) => {
                 return response;
             },
@@ -38,7 +39,7 @@ export class HttpRequest {
                         this.refreshAccessToken(serviceName, requestServiceName).then(() => {
                             // @ts-ignore
                             initialRequest.headers['Authorization'] = getCookie(requestServiceName);
-                            axios(initialRequest);
+                            globalAxios(initialRequest);
                             refreshSubscribers = [];
                         })
                     }).catch((error) => {
@@ -53,9 +54,9 @@ export class HttpRequest {
             let domain = GlobalVariables.httpBaseUrl
                 ? GlobalVariables.httpBaseUrl
                 : GlobalVariables.authBaseUrl;
-            delete axios.defaults.headers.Authorization;
+            delete globalAxios.defaults.headers.Authorization;
 
-            await axios({
+            await globalAxios({
                 url: `${domain}/${serviceName}/User/loginToService`,
                 method: 'POST',
                 data: {
@@ -82,8 +83,8 @@ export class HttpRequest {
             let domain = GlobalVariables.httpBaseUrl
                 ? GlobalVariables.httpBaseUrl
                 : GlobalVariables.authBaseUrl;
-            delete axios.defaults.headers.Authorization;
-            await axios({
+            delete globalAxios.defaults.headers.Authorization;
+            await globalAxios({
                 url: `${domain}/${serviceName}/User/refreshUserMasterToken`,
                 method: 'POST',
                 data: {
@@ -119,16 +120,16 @@ export class HttpRequest {
             ? GlobalVariables.httpBaseUrl
             : GlobalVariables.authBaseUrl;
         let userTokenName = GlobalVariables.tokenUST;
-        let instance = axios.create();
+        // let instance = axios.create();
         if (
             actionName !== 'register' &&
             actionName !== 'login' &&
             actionName !== 'loginToService' &&
             actionName !== 'loginAndGetRefreshToken'
         ) {
-            instance.defaults.headers.common['Authorization'] = getCookie(userTokenName);
+            globalAxios.defaults.headers.common['Authorization'] = getCookie(userTokenName);
         }
-        instance.interceptors.response.use(
+        globalAxios.interceptors.response.use(
             (response) => {
                 return response;
             },
@@ -150,8 +151,8 @@ export class HttpRequest {
                     return new Promise((resolve, reject) => {
                         this.subscribeTokenRefresh((newToken: any) => {
                             originalRequest.headers['Authorization'] = getCookie(requestServiceName);
-                                    resolve(instance(originalRequest));
-                                    refreshSubscribers = [];
+                            resolve(globalAxios(originalRequest));
+                            refreshSubscribers = [];
                         });
                     });
                 } else {
@@ -186,7 +187,7 @@ export class HttpRequest {
                     data = {attributes: actionParameters, ...customActionParameters};
             }
             if (GlobalVariables.httpBaseUrl || GlobalVariables.authBaseUrl) {
-                instance({
+                globalAxios({
                     url: `${domain}/${serviceName}/${modelName}/${actionName}`,
                     method: httpMethod,
                     data: data

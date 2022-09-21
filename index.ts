@@ -26,6 +26,7 @@ import {
   setUmt,
   deleteUmt
 } from './src/GlobalVariables';
+import globalAxios from "./src/AxiosInstance";
 
 export default {
   AuthAction,
@@ -53,7 +54,8 @@ export default {
   deleteUmrt,
   setUmrt,
   setUmt,
-  deleteUmt
+  deleteUmt,
+  globalAxios
 };
 
 export {
@@ -82,5 +84,6 @@ export {
   deleteUmrt,
   setUmrt,
   setUmt,
-  deleteUmt
+  deleteUmt,
+  globalAxios
 };
