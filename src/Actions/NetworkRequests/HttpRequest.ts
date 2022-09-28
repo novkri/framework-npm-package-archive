@@ -54,7 +54,8 @@ export class HttpRequest {
             let domain = GlobalVariables.httpBaseUrl
                 ? GlobalVariables.httpBaseUrl
                 : GlobalVariables.authBaseUrl;
-            delete globalAxios.defaults.headers.common.Authorization;
+            delete globalAxios.defaults.headers.Authorization;
+
             await globalAxios({
                 url: `${domain}/${serviceName}/User/loginToService`,
                 method: 'POST',
