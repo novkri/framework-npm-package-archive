@@ -1,5 +1,5 @@
 {
-  "name": "@egalteam/framework2",
+  "name": "@egal/framework2",
   "description": "Egal",
   "main": "compile/index.js",
   "types": "index.d.ts",
@@ -16,7 +16,7 @@
     "actions",
     "egal"
   ],
-  "author": "EgalTeam",
+  "author": "novkri",
   "license": "Apache-2.0",
   "publishConfig": {
     "access": "public"
