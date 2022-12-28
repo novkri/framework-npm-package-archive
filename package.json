@@ -18,6 +18,9 @@
   ],
   "author": "EgalTeam",
   "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@types/stompjs": "^2.3.4",
     "axios": "^0.21.1",
@@ -35,5 +38,14 @@
     "eslint": "^7.22.0",
     "madge": "^4.0.2",
     "nodemon": "^2.0.7"
-  }
+  },
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/novkri/framework-npm-package-v2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/novkri/framework-npm-package-v2/issues"
+  },
+  "homepage": "https://github.com/novkri/framework-npm-package-v2#readme"
 }
