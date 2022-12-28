@@ -1,3 +1,4 @@
+/* eslint-disable */
 export class GlobalVariables {
   public static socketBaseUrl: string;
   public static httpBaseUrl: string;
@@ -8,13 +9,19 @@ export class GlobalVariables {
 
 export const decipherJWT = function (token: string): any {
   if (!token) {
-    return ''
+    return '';
   }
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
+  const jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split('')
+      .map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join('')
+  );
   return JSON.parse(jsonPayload);
 };
 
@@ -68,34 +75,34 @@ export const deleteCookie = function (name: string): any {
   document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
 };
 
-export const setUmrt = function(token: string) {
+export const setUmrt = function (token: string) {
   try {
     return localStorage.setItem('umrt', token);
   } catch (error) {
     return error;
   }
-}
+};
 
-export const deleteUmrt = function() {
+export const deleteUmrt = function () {
   try {
     return localStorage.removeItem('umrt');
   } catch (error) {
     return error;
   }
-}
+};
 
-export const setUmt = function(token: string) {
+export const setUmt = function (token: string) {
   try {
     return localStorage.setItem('umt', token);
   } catch (error) {
     return error;
   }
-}
+};
 
-export const deleteUmt = function() {
+export const deleteUmt = function () {
   try {
     return localStorage.removeItem('umt');
   } catch (error) {
     return error;
   }
-}
+};

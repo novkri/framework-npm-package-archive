@@ -1,3 +1,4 @@
+/* eslint-disable */
 export class GetItemsFilterParams {
   filter: (string | object)[];
   tempArr: (string | object)[];

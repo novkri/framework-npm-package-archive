@@ -1,3 +1,4 @@
+/* eslint-disable */
 // @ts-ignore
 import Validator from 'validatorjs';
 import { rules } from '../Helpers/ValidationRules';

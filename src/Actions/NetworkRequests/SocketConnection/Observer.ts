@@ -1,5 +1,5 @@
 export let observers: any[] = [];
-
+/* eslint-disable */
 export class EventObserver {
   private static instance: EventObserver | null;
   private modelName: string | undefined;

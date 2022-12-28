@@ -1,13 +1,14 @@
-import {ModelInterface} from './ModelInterface';
-import {GetItemsAction} from '../Actions/GetItemsAction/GetItemsAction';
-import {CRUDAction} from '../Actions/CRUDActions/CRUDAction';
-import {CustomAction} from '../Actions/CustomAction/CustomAction';
-import {GetModelMetadataAction} from '../Actions/GetMetadataAction/GetModelMetadataAction';
-import {MetaDataInterface} from './MetaDataInterface';
-import {EventObserver} from '../Actions/NetworkRequests/SocketConnection/Observer';
-import {GlobalVariables} from '../GlobalVariables';
-import {RoutingKeyParams} from '../Actions/Interfaces/RoutingKeyParams';
-import {ModelConnection} from './ModelConnection';
+/* eslint-disable */
+import { ModelInterface } from './ModelInterface';
+import { GetItemsAction } from '../Actions/GetItemsAction/GetItemsAction';
+import { CRUDAction } from '../Actions/CRUDActions/CRUDAction';
+import { CustomAction } from '../Actions/CustomAction/CustomAction';
+import { GetModelMetadataAction } from '../Actions/GetMetadataAction/GetModelMetadataAction';
+import { MetaDataInterface } from './MetaDataInterface';
+import { EventObserver } from '../Actions/NetworkRequests/SocketConnection/Observer';
+import { GlobalVariables } from '../GlobalVariables';
+import { RoutingKeyParams } from '../Actions/Interfaces/RoutingKeyParams';
+import { ModelConnection } from './ModelConnection';
 
 const observer: EventObserver = EventObserver.getInstance();
 
@@ -55,9 +56,9 @@ export class Model implements ModelInterface {
   actionGetMetadata(microserviceName: string, connectionType: string): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeGetMetadataRequest = new GetModelMetadataAction(
-        microserviceName,
-        'getMetadata',
-        this.modelName
+      microserviceName,
+      'getMetadata',
+      this.modelName
     );
     new ModelConnection().createConnection(connectionType, initializeGetMetadataRequest);
   }
@@ -74,14 +75,14 @@ export class Model implements ModelInterface {
    * @param actionName
    */
   actionGetItems(
-      microserviceName: string,
-      connectionType: string,
-      perPage?: number,
-      page?: number,
-      filter?: (string | object)[] | undefined,
-      withs?: string | string[],
-      orders?: string[][],
-      actionName?: string
+    microserviceName: string,
+    connectionType: string,
+    perPage?: number,
+    page?: number,
+    filter?: (string | object)[] | undefined,
+    withs?: string | string[],
+    orders?: string[][],
+    actionName?: string
   ): any {
     let userGetItems = actionName !== undefined ? actionName : 'getItems';
     GlobalVariables.tokenUST = microserviceName;
@@ -105,12 +106,12 @@ export class Model implements ModelInterface {
    * @param orders
    */
   actionGetItem(
-      microserviceName: string,
-      connectionType: string,
-      id: string,
-      filter?: (string | object)[] | undefined,
-      withs?: [],
-      orders?: string[][]
+    microserviceName: string,
+    connectionType: string,
+    id: string,
+    filter?: (string | object)[] | undefined,
+    withs?: [],
+    orders?: string[][]
   ): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeGetItem = new GetItemsAction(microserviceName, this.modelName, 'getItem');
@@ -130,10 +131,10 @@ export class Model implements ModelInterface {
   actionUpdate(microserviceName: string, connectionType: string, actionParams: object): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeActionUpdate = new CRUDAction(
-        microserviceName,
-        this.modelName,
-        'update',
-        actionParams
+      microserviceName,
+      this.modelName,
+      'update',
+      actionParams
     );
     new ModelConnection().createConnection(connectionType, initializeActionUpdate);
   }
@@ -148,10 +149,10 @@ export class Model implements ModelInterface {
   actionUpdateMany(microserviceName: string, connectionType: string, actionParams: object): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeActionUpdate = new CRUDAction(
-        microserviceName,
-        this.modelName,
-        'updateMany',
-        actionParams
+      microserviceName,
+      this.modelName,
+      'updateMany',
+      actionParams
     );
     new ModelConnection().createConnection(connectionType, initializeActionUpdate);
   }
@@ -163,16 +164,16 @@ export class Model implements ModelInterface {
    * @param actionParams
    */
   actionUpdateManyWithFilter(
-      microserviceName: string,
-      connectionType: string,
-      actionParams: object
+    microserviceName: string,
+    connectionType: string,
+    actionParams: object
   ): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeActionUpdateManyWithFilter = new CRUDAction(
-        microserviceName,
-        this.modelName,
-        'updateManyRaw',
-        actionParams
+      microserviceName,
+      this.modelName,
+      'updateManyRaw',
+      actionParams
     );
     new ModelConnection().createConnection(connectionType, initializeActionUpdateManyWithFilter);
   }
@@ -185,18 +186,18 @@ export class Model implements ModelInterface {
    * @param channelParameters
    */
   actionCreate(
-      microserviceName: string,
-      connectionType: string,
-      actionParams: object,
-      channelParameters?: RoutingKeyParams
+    microserviceName: string,
+    connectionType: string,
+    actionParams: object,
+    channelParameters?: RoutingKeyParams
   ): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeActionCreate = new CRUDAction(
-        microserviceName,
-        this.modelName,
-        'create',
-        actionParams,
-        channelParameters
+      microserviceName,
+      this.modelName,
+      'create',
+      actionParams,
+      channelParameters
     );
     new ModelConnection().createConnection(connectionType, initializeActionCreate);
   }
@@ -211,10 +212,10 @@ export class Model implements ModelInterface {
   actionCreateMany(microserviceName: string, connectionType: string, actionParams: object): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeActionCreate = new CRUDAction(
-        microserviceName,
-        this.modelName,
-        'createMany',
-        actionParams
+      microserviceName,
+      this.modelName,
+      'createMany',
+      actionParams
     );
     new ModelConnection().createConnection(connectionType, initializeActionCreate);
   }
@@ -228,10 +229,10 @@ export class Model implements ModelInterface {
   actionDelete(microserviceName: string, connectionType: string, actionParams: string[]): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeActionDelete = new CRUDAction(
-        microserviceName,
-        this.modelName,
-        'delete',
-        actionParams
+      microserviceName,
+      this.modelName,
+      'delete',
+      actionParams
     );
     new ModelConnection().createConnection(connectionType, initializeActionDelete);
   }
@@ -246,10 +247,10 @@ export class Model implements ModelInterface {
   actionDeleteMany(microserviceName: string, connectionType: string, actionParams: string[]): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeActionDelete = new CRUDAction(
-        microserviceName,
-        this.modelName,
-        'deleteMany',
-        actionParams
+      microserviceName,
+      this.modelName,
+      'deleteMany',
+      actionParams
     );
     new ModelConnection().createConnection(connectionType, initializeActionDelete);
   }
@@ -261,16 +262,16 @@ export class Model implements ModelInterface {
    * @param actionParams
    */
   actionDeleteManyWithFilter(
-      microserviceName: string,
-      connectionType: string,
-      actionParams: object
+    microserviceName: string,
+    connectionType: string,
+    actionParams: object
   ): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeActionDeleteManyWithFilter = new CRUDAction(
-        microserviceName,
-        this.modelName,
-        'deleteManyRaw',
-        actionParams
+      microserviceName,
+      this.modelName,
+      'deleteManyRaw',
+      actionParams
     );
     new ModelConnection().createConnection(connectionType, initializeActionDeleteManyWithFilter);
   }
@@ -284,19 +285,19 @@ export class Model implements ModelInterface {
    */
 
   actionCustom(
-      microserviceName: string,
-      actionName: string,
-      connectionType: string,
-      actionParams?: object,
-      additionalParams?: any
+    microserviceName: string,
+    actionName: string,
+    connectionType: string,
+    actionParams?: object,
+    additionalParams?: any
   ): any {
     GlobalVariables.tokenUST = microserviceName;
     const initializeActionCustom = new CustomAction(
-        microserviceName,
-        this.modelName,
-        actionName,
-        actionParams,
-        additionalParams
+      microserviceName,
+      this.modelName,
+      actionName,
+      actionParams,
+      additionalParams
     );
     new ModelConnection().createConnection(connectionType, initializeActionCustom);
   }
