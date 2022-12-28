@@ -16,7 +16,7 @@
     "actions",
     "egal"
   ],
-  "author": "Egal Team",
+  "author": "EgalTeam",
   "license": "Apache-2.0",
   "dependencies": {
     "@types/stompjs": "^2.3.4",
